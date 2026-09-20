@@ -24,7 +24,7 @@ export function Identity() {
 
         <Reveal delay={0.06}>
           <h2 className="mt-7 max-w-[24ch] text-chapter">
-            서비스 기획에 필요한 경쟁력을 세 가지로 정리했습니다
+            기획자로서 제가 잘하는 일 세 가지
           </h2>
         </Reveal>
 

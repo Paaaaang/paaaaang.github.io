@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useReducedMotion } from '../hooks/useMotionPreference'
@@ -50,6 +50,13 @@ export function MaskedLines({
   const ref = useRef<HTMLElement>(null)
   const reduced = useReducedMotion()
 
+  // 배열 리터럴은 렌더마다 새 참조라 그대로 의존성에 넣으면,
+  // 부모가 리렌더될 때마다 이펙트가 다시 돌아 제목이 다시 등장한다.
+  // 스크롤에 물린 부모(MethodScene)에서는 매 프레임 재실행돼 제목이 깜빡인다.
+  // 내용이 실제로 바뀔 때만 다시 돌도록 문자열로 고정한다.
+  const key = lines.join('\u0000')
+  const stableLines = useMemo(() => lines, [key]) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -79,11 +86,11 @@ export function MaskedLines({
       tween.scrollTrigger?.kill()
       tween.kill()
     }
-  }, [lines, delay, reduced])
+  }, [key, delay, reduced])
 
   return (
     <Tag ref={ref as React.Ref<never>} className={className} aria-label={lines.join(' ')}>
-      {lines.map((line, i) => (
+      {stableLines.map((line, i) => (
         <span
           key={`${line}-${i}`}
           aria-hidden="true"

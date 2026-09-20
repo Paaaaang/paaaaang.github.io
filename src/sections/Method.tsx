@@ -20,7 +20,7 @@ export function Limits() {
 
           <Reveal delay={0.06}>
             <h2 className="mt-7 max-w-[22ch] text-chapter">
-              고치고 나서야 알게 된 것들
+              틀리고 나서 바꾼 것들
             </h2>
           </Reveal>
 

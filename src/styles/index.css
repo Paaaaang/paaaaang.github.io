@@ -23,10 +23,14 @@
   --color-paper-dim: #a8a49c;
   --color-paper-faint: #85817a;
 
-  /* 챕터 색. profile.ts 의 accent 값과 짝을 이룬다. */
-  --color-ch1: #e8542f;
-  --color-ch2: #3e8e7e;
-  --color-ch3: #c98a2b;
+  /* 챕터 색.
+     색상(hue)은 하나만 쓴다. 버밀리언 한 가지를 명도만 세 단계로 나눈다.
+     챕터마다 색상 자체를 바꾸면(주황 → 청록 → 황토) 각 챕터는 구분되지만
+     사이트 전체에 "이 사람의 색"이 남지 않는다. 명도 단계는 구분도 되고
+     하나의 색으로도 읽힌다. 세 단계 모두 잉크 배경 대비 AA(4.5:1)를 넘는다. */
+  --color-ch1: #e8542f; /* 대비 5.41 */
+  --color-ch2: #ec7a4c; /* 대비 7.03 */
+  --color-ch3: #f3a072; /* 대비 9.50 */
 
   --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, 'Segoe UI', Roboto, sans-serif;

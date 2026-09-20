@@ -56,7 +56,9 @@ export function MethodScene() {
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               const index = Math.min(steps - 1, Math.round(self.progress * (steps - 1)))
-              setActive(index)
+              // 값이 바뀔 때만 상태를 건드린다. 매 프레임 setState 하면
+              // 섹션 전체가 다시 그려지고 제목 애니메이션이 처음부터 다시 돈다.
+              setActive((prev) => (prev === index ? prev : index))
             },
           },
         })

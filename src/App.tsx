@@ -16,8 +16,34 @@ import { MethodScene } from './sections/MethodScene'
 import { Limits } from './sections/Method'
 import { Credentials, Contact } from './sections/Credentials'
 import { caseStudies } from './content/profile'
+import { Reveal } from './components/motion'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { useReducedMotion } from './hooks/useMotionPreference'
+
+/**
+ * 경험 구간의 시작을 알리는 구분선.
+ *
+ * 앞 섹션이 끝나자마자 01 이 튀어나오면 이게 한 덩어리라는 신호가 없다.
+ * 회사 프로젝트가 아니라 직접 겪은 일들이라 '경험'으로 부른다.
+ */
+function ExperienceLabel() {
+  return (
+    <div className="px-6 pt-10 sm:px-10 lg:px-16">
+      <div className="mx-auto max-w-6xl">
+        <Reveal>
+          <div className="rule flex items-baseline justify-between gap-6 pt-8">
+            <p className="font-mono text-[0.7rem] tracking-[0.26em] text-paper-faint uppercase">
+              경험 · Experience
+            </p>
+            <p className="font-mono text-[0.7rem] tracking-[0.2em] tnum text-paper-faint">
+              03
+            </p>
+          </div>
+        </Reveal>
+      </div>
+    </div>
+  )
+}
 
 export default function App() {
   const reduced = useReducedMotion()
@@ -48,6 +74,7 @@ export default function App() {
         <Hero />
         <Identity />
         <Proof />
+        <ExperienceLabel />
         {caseStudies.map((study) => (
           <CaseStudySection key={study.id} study={study} />
         ))}

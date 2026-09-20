@@ -81,7 +81,7 @@ export function Hero() {
             className="font-mono text-[0.64rem] tracking-[0.2em] uppercase sm:text-[0.7rem] sm:tracking-[0.24em]"
             style={{ color: 'var(--accent)' }}
           >
-            {profile.role} · 신입
+            {profile.role}
           </p>
 
           <h1 data-hero-name className="mt-3 text-display">

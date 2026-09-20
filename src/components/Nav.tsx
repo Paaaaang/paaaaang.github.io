@@ -93,7 +93,7 @@ export function Nav() {
         <div className="flex min-w-0 items-baseline gap-3">
           <span className="shrink-0 text-sm font-bold tracking-[-0.01em]">{profile.name}</span>
           <span className="truncate font-mono text-[0.66rem] tracking-[0.16em] text-paper-faint uppercase">
-            {profile.role} · 신입
+            {profile.role}
           </span>
         </div>
 
