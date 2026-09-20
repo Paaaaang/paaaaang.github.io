@@ -1,0 +1,67 @@
+# 오평일 · 서비스 기획자 포트폴리오
+
+이력서(2026-09-20 최종본)를 바탕으로 만든 개인 포트폴리오 사이트입니다.
+
+## 실행
+
+```bash
+npm install
+npm run dev        # 개발 서버
+npm run build      # 타입체크 + 프로덕션 빌드
+npm run preview    # 빌드 결과 확인
+```
+
+## 기술 스택
+
+| 영역 | 선택 | 이유 |
+|---|---|---|
+| 빌드 | Vite 8 + React 19 + TypeScript | 정적 빌드로 GitHub Pages에 그대로 올라감 |
+| 스타일 | Tailwind CSS v4 | `@theme` 토큰으로 색·타이포를 한 곳에서 관리 |
+| 3D | three.js 0.186 + React Three Fiber 9 | 배경 파티클 한 장. 지연 로딩되어 첫 화면을 막지 않음 |
+| 스크롤 모션 | GSAP 3.15 + ScrollTrigger | 스크롤 연출 전담. Webflow 인수 후 전 플러그인 무료 |
+| 스무스 스크롤 | Lenis 1.3 | GSAP ticker에 물려 한 루프에서 돌림 |
+| 포인터 모션 | Motion 13 | 스프링 물리 기반 마이크로 인터랙션만 담당 |
+
+애니메이션 엔진을 둘 쓰는 이유는 역할이 다르기 때문입니다.
+스크롤 연출은 GSAP이, 포인터 단위 반응은 Motion이 맡고 같은 대상을 건드리지 않습니다.
+
+## 구조
+
+```
+src/
+  content/profile.ts     ← 모든 텍스트와 수치의 단일 진실 소스
+  sections/              히어로 · 강점 · 증거 · 케이스 3종 · 방법 · 역량 · 연락
+  scene/                 배경 3D 파티클 (흩어짐 → 격자 정렬)
+  components/            모션 유틸, 자료 프레임, 목차
+  hooks/                 스무스 스크롤, 모션 축소 감지, 성능 등급
+public/media/            자료 이미지 넣는 곳 (폴더별 README 참고)
+docs/                    개선 계획서와 아트디렉션 기록
+.claude/skills/          이 프로젝트용으로 선별 설치한 스킬 13종
+```
+
+## 내가 채워야 할 것
+
+| 무엇 | 어디에 | 안내 |
+|---|---|---|
+| 이력서 사진 | `public/media/profile/` | [README](public/media/profile/README.md) |
+| 프로젝트 자료 (아키텍처·화면설계·PPT·현장사진) | `public/media/<케이스 id>/` | [README](public/media/README.md) |
+| 이력서 PDF | `public/` 에 넣고 `profile.resumePdf` 경로 연결 | 넣으면 히어로에 다운로드 버튼이 생깁니다 |
+
+사진과 자료가 없어도 사이트는 정상 동작합니다.
+빈 자리에는 "여기에 무엇이 들어갈 자리인지"가 적힌 프레임이 그려지고,
+파일을 넣어도 크기가 같아서 레이아웃이 움직이지 않습니다.
+
+## 배포
+
+`main` 브랜치에 푸시하면 GitHub Actions가 빌드해 GitHub Pages로 올립니다.
+
+레포 이름이 `Paaaaang.github.io` 이면 `https://paaaaang.github.io/` 루트로 배포됩니다.
+다른 이름이라면 `.github/workflows/deploy.yml` 의 `VITE_BASE` 를 `/레포이름/` 으로 바꿔야 합니다.
+
+## 접근성 · 성능
+
+- 모든 본문 텍스트가 배경 대비 4.5:1 이상 (WCAG 2.2 AA). 측정 근거는 [아트디렉션 문서](docs/아트디렉션-사진-배경-컬러.md)
+- `prefers-reduced-motion` 에서 3D·스무스 스크롤·리빌이 모두 꺼지고 정적 문서로 동작
+- WebGL을 못 쓰는 환경에서는 3D 없이 렌더
+- 기기 성능에 따라 파티클 수와 픽셀 비율을 조절 (1400 / 3200 / 6000)
+- 휴대폰 번호와 상세 주소는 공개하지 않음. 이메일은 런타임에 조합해 스크래퍼를 막음

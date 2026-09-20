@@ -1,0 +1,186 @@
+@import 'tailwindcss';
+
+/* --accent 를 보간 가능한 색으로 등록한다. 등록해야 색 전환이 부드럽게 보간된다.
+   미지원 브라우저에서는 즉시 전환되고, 그 외 동작은 같다. */
+@property --accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #e8542f;
+}
+
+/* ------------------------------------------------------------------ */
+/* 디자인 토큰                                                          */
+/*                                                                    */
+/* 시각적 명제: "흩어진 것이 구조로 정렬되는 순간".                      */
+/* 잉크에 가까운 무채색 바탕 위에 따뜻한 종이색 본문, 챕터마다 한 가지 색.  */
+/* 아무 데나 붙여도 어울리는 파랑/보라 그라디언트는 쓰지 않는다.          */
+/* ------------------------------------------------------------------ */
+@theme {
+  --color-ink: #0a0a0b;
+  --color-ink-raised: #121214;
+  --color-ink-line: #26262a;
+  --color-paper: #e9e5dd;
+  --color-paper-dim: #a8a49c;
+  --color-paper-faint: #85817a;
+
+  /* 챕터 색. profile.ts 의 accent 값과 짝을 이룬다. */
+  --color-ch1: #e8542f;
+  --color-ch2: #3e8e7e;
+  --color-ch3: #c98a2b;
+
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* 에디토리얼 스케일. clamp 로 뷰포트에 직접 반응시킨다. */
+  --text-display: clamp(2.35rem, 5.6vw, 5rem);
+  --text-chapter: clamp(1.65rem, 3.4vw, 3rem);
+  --text-lede: clamp(1rem, 1.35vw, 1.2rem);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    /* 현재 챕터 색. GSAP 이 스크롤에 따라 이 변수를 바꾼다. */
+    --accent: var(--color-ch1);
+    transition: --accent 600ms var(--ease-out-expo);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: auto; /* Lenis 가 스크롤을 담당한다 */
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01', 'tnum';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    word-break: keep-all; /* 한글 어절 단위 줄바꿈 */
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* ------------------------------------------------------------------ */
+  /* 배경 레이어                                                         */
+  /*                                                                    */
+  /* 순수 검정은 "기본값으로 만든 다크 테마"처럼 읽힌다.                   */
+  /* 인쇄물 같은 재질을 주기 위해 그레인과 비네트를 얇게 겹친다.           */
+  /* 둘 다 정적이다. 움직이는 그레인은 멀미를 유발한다.                    */
+  /* ------------------------------------------------------------------ */
+  .backdrop-layers {
+    position: fixed;
+    inset: 0;
+    z-index: -5;
+    pointer-events: none;
+  }
+
+  /* 현재 챕터 색의 초저농도 워시. 챕터가 바뀐 것만 체감되게 한다.
+     농도가 낮아 본문 대비에는 영향을 주지 않는다. */
+  .backdrop-wash {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        120% 80% at 50% 0%,
+        color-mix(in oklab, var(--accent) 7%, transparent) 0%,
+        transparent 58%
+      );
+    transition: background 700ms var(--ease-out-expo);
+  }
+
+  /* 가장자리를 눌러 시선을 가운데로 모은다. */
+  .backdrop-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      135% 95% at 50% 45%,
+      transparent 42%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+  }
+
+  /* 필름 그레인. 인라인 SVG turbulence 라 네트워크 요청이 없다. */
+  .backdrop-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+  }
+}
+
+@layer utilities {
+  /* 본문 단 — 한글 가독성 기준 45~50자 */
+  .measure {
+    max-width: 62ch;
+  }
+
+  .rule {
+    border-top: 1px solid var(--color-ink-line);
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 스크롤 진입 전 초기 상태. GSAP 이 없어도 내용은 읽힌다. */
+  .will-reveal {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 모션 축소 선호                                                       */
+/* 3D, 스무스 스크롤, 리빌을 모두 끄고 정적인 문서로 되돌린다.            */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .will-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* JS 없이 열었을 때도 전체 내용이 보이도록 */
+.no-js .will-reveal {
+  opacity: 1;
+  transform: none;
+}
