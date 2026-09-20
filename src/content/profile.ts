@@ -19,6 +19,8 @@ export const profile = {
   /** 스크래퍼 대응: 조각으로 보관하고 런타임에 합친다. */
   emailParts: ['play0414', 'naver.com'],
   github: 'https://github.com/Paaaaang',
+  /** GitHub 프로필에 걸어둔 블로그. 커리어 기본 정보로만 노출한다. */
+  blog: 'https://axcore.ai.kr/',
   /**
    * 이력서 사진. `public/media/profile/` 에 파일을 넣고 경로를 채운다.
    * 비워 두면 히어로에 빈 프레임이 그려지고 레이아웃은 그대로 유지된다.
@@ -52,6 +54,7 @@ export const emailAddress = () => profile.emailParts.join('@')
 
 export const identity: { label: string; value: string; emphasis?: boolean }[] = [
   { label: '경력', value: '신입', emphasis: true },
+  { label: '출생', value: '2000년생' },
   { label: '졸업', value: '2026. 02 졸업', emphasis: true },
   { label: '전공', value: '조선대학교 컴퓨터공학과 · 경영학부 복수전공' },
   { label: '병역', value: '군필 (육군 병장 만기 제대)' },

@@ -12,6 +12,12 @@
     />
     <link rel="canonical" href="https://paaaaang.github.io/" />
 
+    <!-- 검색 결과에 노출하지 않는다. 채용 담당자에게 직접 전달하는 링크로만 쓴다.
+         robots.txt 와 함께 걸어야 이미 수집된 페이지도 색인에서 빠진다.
+         규칙을 지키는 크롤러에만 유효하다는 점은 docs/봇-차단.md 에 적어 두었다. -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+
     <meta property="og:type" content="profile" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:title" content="오평일 · 서비스 기획자 포트폴리오" />

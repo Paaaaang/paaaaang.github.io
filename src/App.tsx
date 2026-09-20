@@ -7,11 +7,13 @@ const SceneCanvas = lazy(() =>
   import('./scene/SceneCanvas').then((m) => ({ default: m.SceneCanvas })),
 )
 import { Nav } from './components/Nav'
+import { Cursor } from './components/scroll'
 import { Hero } from './sections/Hero'
 import { Identity } from './sections/Identity'
 import { Proof } from './sections/Proof'
 import { CaseStudySection } from './sections/CaseStudySection'
-import { Method } from './sections/Method'
+import { MethodScene } from './sections/MethodScene'
+import { Limits } from './sections/Method'
 import { Credentials, Contact } from './sections/Credentials'
 import { caseStudies } from './content/profile'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
@@ -40,6 +42,7 @@ export default function App() {
         <SceneCanvas />
       </Suspense>
       <Nav />
+      <Cursor />
 
       <main>
         <Hero />
@@ -48,7 +51,8 @@ export default function App() {
         {caseStudies.map((study) => (
           <CaseStudySection key={study.id} study={study} />
         ))}
-        <Method />
+        <MethodScene />
+        <Limits />
         <Credentials />
       </main>
 

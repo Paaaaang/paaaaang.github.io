@@ -1,5 +1,7 @@
+import { useRef } from 'react'
 import type { MediaSlot } from '../content/profile'
 import { Reveal } from './motion'
+import { ClipReveal, useParallax } from './scroll'
 
 /**
  * 자료가 들어갈 자리.
@@ -18,21 +20,28 @@ const RATIO: Record<NonNullable<MediaSlot['ratio']>, string> = {
 
 export function MediaFrame({ slot }: { slot: MediaSlot }) {
   const aspect = RATIO[slot.ratio ?? 'video']
+  const frameRef = useRef<HTMLElement>(null)
+
+  // 자료 프레임이 본문보다 아주 조금 느리게 흐른다.
+  // 폭을 좁게 둔 이유는, 다이어그램 위에서 크게 움직이면 읽기 어려워지기 때문이다.
+  useParallax(frameRef, { speed: 0.035 })
 
   return (
-    <figure className="m-0">
+    <figure ref={frameRef} className="m-0">
       {slot.src ? (
-        <img
-          src={slot.src}
-          alt={slot.alt ?? slot.caption}
-          loading="lazy"
-          decoding="async"
-          className="w-full rounded-sm border border-[--color-ink-line] bg-[--color-ink-raised] object-cover"
-          style={{ aspectRatio: aspect }}
-        />
+        <ClipReveal className="overflow-hidden rounded-sm border border-ink-line bg-ink-raised">
+          <img
+            src={slot.src}
+            alt={slot.alt ?? slot.caption}
+            loading="lazy"
+            decoding="async"
+            className="w-full object-cover"
+            style={{ aspectRatio: aspect }}
+          />
+        </ClipReveal>
       ) : (
         <div
-          className="relative grid w-full place-items-center rounded-sm border border-dashed border-[--color-ink-line] bg-[--color-ink-raised]/60"
+          className="relative grid w-full place-items-center rounded-sm border border-dashed border-ink-line bg-ink-raised/60"
           style={{ aspectRatio: aspect }}
         >
           {/* 빈 프레임임을 드러내는 옅은 격자. 회색 덩어리보다 의도가 읽힌다. */}
@@ -52,22 +61,22 @@ export function MediaFrame({ slot }: { slot: MediaSlot }) {
             >
               {slot.kind}
             </span>
-            <p className="mt-2 max-w-[34ch] text-sm leading-relaxed text-[--color-paper-faint]">
+            <p className="mt-2 max-w-[34ch] text-sm leading-relaxed text-paper-faint">
               {slot.caption}
             </p>
           </div>
         </div>
       )}
 
-      <figcaption className="mt-3 flex items-baseline gap-2 text-xs text-[--color-paper-faint]">
+      <figcaption className="mt-3 flex items-baseline gap-2 text-xs text-paper-faint">
         <span
           className="font-mono tracking-[0.14em] uppercase"
           style={{ color: 'var(--accent)' }}
         >
           {slot.kind}
         </span>
-        <span className="text-[--color-ink-line]">/</span>
-        <span className="text-[--color-paper-dim]">{slot.caption}</span>
+        <span className="text-ink-line">/</span>
+        <span className="text-paper-dim">{slot.caption}</span>
       </figcaption>
     </figure>
   )
@@ -86,7 +95,7 @@ export function MediaGallery({ slots }: { slots: MediaSlot[] }) {
 
   return (
     <div className="mt-14">
-      <p className="mb-5 font-mono text-[0.68rem] tracking-[0.22em] text-[--color-paper-faint] uppercase">
+      <p className="mb-5 font-mono text-[0.68rem] tracking-[0.22em] text-paper-faint uppercase">
         자료
       </p>
 

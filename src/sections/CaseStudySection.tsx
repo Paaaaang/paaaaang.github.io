@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import type { CaseStudy } from '../content/profile'
 import { Reveal, useChapterAccent } from '../components/motion'
 import { MediaGallery } from '../components/MediaFrame'
+import { MaskedLines } from '../components/scroll'
 
 /**
  * 케이스 스터디 한 챕터.
@@ -10,6 +11,18 @@ import { MediaGallery } from '../components/MediaFrame'
  * 문제 상황 → 이슈 해결 → 주요 성과 → 배운 점.
  * 기획자가 실제로 쓰는 문서 구조라 읽는 사람이 예측 가능하다.
  */
+/**
+ * 긴 제목을 두 줄로 나눈다. 어절 경계에서만 자르고,
+ * 앞줄이 조금 길어지도록 중간보다 뒤에서 끊는다. 뒷줄이 더 짧으면
+ * 에디토리얼 제목처럼 안정적으로 읽힌다.
+ */
+function splitTitle(title: string): string[] {
+  const words = title.split(' ')
+  if (words.length < 4) return [title]
+  const cut = Math.ceil(words.length * 0.55)
+  return [words.slice(0, cut).join(' '), words.slice(cut).join(' ')]
+}
+
 export function CaseStudySection({ study }: { study: CaseStudy }) {
   const ref = useRef<HTMLElement>(null)
   useChapterAccent(ref, study.accent)
@@ -19,7 +32,7 @@ export function CaseStudySection({ study }: { study: CaseStudy }) {
       ref={ref}
       id={study.id}
       className="relative px-6 py-24 sm:px-10 lg:px-16 lg:py-32"
-      aria-labelledby={`${study.id}-title`}
+      aria-label={study.title}
     >
       <div className="mx-auto max-w-6xl">
         {/* ---- 챕터 헤더 ---- */}
@@ -38,14 +51,14 @@ export function CaseStudySection({ study }: { study: CaseStudy }) {
             </div>
           </Reveal>
 
-          <Reveal delay={0.08}>
-            <h2
-              id={`${study.id}-title`}
-              className="mt-7 max-w-[20ch] text-chapter"
-            >
-              {study.title}
-            </h2>
-          </Reveal>
+          {/* 제목은 줄 단위로 잘라 아래에서 밀어 올린다.
+              한글은 어절 단위로 끊어야 줄바꿈이 어색하지 않다. */}
+          <MaskedLines
+            lines={splitTitle(study.title)}
+            className="mt-7 max-w-[20ch] text-chapter"
+            as="h2"
+            delay={0.05}
+          />
 
           <Reveal delay={0.14}>
             <p className="measure mt-8 text-lede leading-[1.75] text-paper-dim">
