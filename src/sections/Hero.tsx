@@ -8,10 +8,10 @@ import { Magnetic } from '../components/Magnetic'
 /**
  * 첫 화면 — 정체성 우선.
  *
- * 채용 담당자가 스크롤 없이 확인해야 하는 것은 네 가지다.
- * 얼굴, 이름, 직무, 지금 어떤 상태인가(신입 / 졸업 시점).
- * 주장("요청의 표면이 아니라…")은 그 다음에 온다.
- * 누가 하는 말인지 모른 채 읽는 주장은 남지 않는다.
+ * 채용 담당자가 스크롤 없이 확인해야 하는 것은 얼굴, 이름, 직무다.
+ * 문장은 이력서 맨 윗줄과 같은 형식을 쓴다.
+ * "가치와 효율을 찾아내는 / 서비스 기획자 오평일입니다."
+ * 관형구가 위에서 받치고 직함과 이름이 문장을 닫는다.
  */
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
@@ -34,8 +34,8 @@ export function Hero() {
       })
         .from('[data-hero-photo]', { opacity: 0, duration: 0.5 }, 0)
         .from('[data-hero-kicker]', { opacity: 0, y: 12, duration: 0.6 }, '-=0.8')
-        .from('[data-hero-name]', { opacity: 0, y: 30, duration: 0.9 }, '-=0.45')
-        .from('[data-hero-line]', { opacity: 0, y: 22, duration: 0.85, stagger: 0.07 }, '-=0.55')
+        .from('[data-hero-lead]', { opacity: 0, y: 20, duration: 0.8 }, '-=0.45')
+        .from('[data-hero-line]', { opacity: 0, y: 30, duration: 0.95, stagger: 0.09 }, '-=0.5')
         .from('[data-hero-chips] > *', { opacity: 0, y: 10, duration: 0.5, stagger: 0.04 }, '-=0.5')
         .from('[data-hero-cta] > *', { opacity: 0, y: 12, duration: 0.6, stagger: 0.07 }, '-=0.35')
 
@@ -64,7 +64,7 @@ export function Hero() {
       */}
       <div
         data-hero-body
-        className="mx-auto grid w-full max-w-6xl grid-cols-[6.5rem_minmax(0,1fr)] items-start gap-x-5 gap-y-7 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-x-7 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] lg:items-center lg:gap-x-16 lg:gap-y-8"
+        className="mx-auto grid w-full max-w-6xl grid-cols-[6.5rem_minmax(0,1fr)] items-start gap-x-5 gap-y-6 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-x-6 lg:grid-cols-[16.5rem_minmax(0,1fr)] lg:items-center lg:gap-x-10 lg:gap-y-6"
       >
         {/* ---- 사진 ---- */}
         <div
@@ -74,32 +74,39 @@ export function Hero() {
           <PhotoFrame />
         </div>
 
-        {/* ---- 이름 ---- */}
+        {/* ---- 머리말 + 관형구 ---- */}
         <div className="col-start-2 row-start-1 min-w-0 self-center lg:self-end">
           <p
             data-hero-kicker
-            className="font-mono text-[0.64rem] tracking-[0.2em] uppercase sm:text-[0.7rem] sm:tracking-[0.24em]"
-            style={{ color: 'var(--accent)' }}
+            className="font-mono text-[0.62rem] tracking-[0.22em] text-paper-faint uppercase sm:text-[0.68rem] sm:tracking-[0.26em]"
           >
-            {profile.role}
+            Portfolio 2026
           </p>
 
-          <h1 data-hero-name className="mt-3 text-display">
-            {profile.name}
-          </h1>
+          <p
+            data-hero-lead
+            className="mt-4 text-[clamp(1.15rem,2.6vw,2.15rem)] leading-[1.32] font-medium tracking-[-0.035em] text-paper-dim"
+          >
+            {profile.lead}
+          </p>
         </div>
 
-        {/* ---- 주장 · 기본 정보 · 행동 ---- */}
+        {/* ---- 선언 · 기본 정보 · 행동 ---- */}
         <div className="col-span-2 row-start-2 min-w-0 lg:col-span-1 lg:col-start-2 lg:self-start">
-          <p className="measure text-[clamp(1.02rem,1.75vw,1.45rem)] leading-[1.6] font-bold tracking-[-0.02em]">
-            {['요청의 표면이 아니라 그 아래의', '운영 실태를 먼저 확인합니다'].map((line) => (
-              <span key={line} data-hero-line className="block">
-                {line}
-              </span>
-            ))}
-          </p>
+          {/*
+            이력서 맨 윗줄과 같은 형식이다. 관형구가 위에서 받쳐 주고
+            여기서 직함과 이름이 문장을 닫는다.
+          */}
+          <h1 data-hero-name className="text-display">
+            <span data-hero-line className="block" style={{ color: 'var(--accent)' }}>
+              서비스 기획자
+            </span>
+            <span data-hero-line className="block">
+              {profile.name}입니다.
+            </span>
+          </h1>
 
-          <p className="measure mt-4 text-[0.94rem] leading-[1.75] text-paper-dim sm:text-base">
+          <p className="measure mt-6 text-[0.94rem] leading-[1.75] text-paper-dim sm:text-base">
             {profile.subthesis}
           </p>
 
