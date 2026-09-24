@@ -94,11 +94,7 @@ export function MediaGallery({ slots }: { slots: MediaSlot[] }) {
   const [lead, ...rest] = slots
 
   return (
-    <div className="mt-14">
-      <p className="mb-5 font-mono text-[0.68rem] tracking-[0.22em] text-paper-faint uppercase">
-        자료
-      </p>
-
+    <div>
       {lead && (
         <Reveal>
           <MediaFrame slot={lead} />
@@ -106,7 +102,7 @@ export function MediaGallery({ slots }: { slots: MediaSlot[] }) {
       )}
 
       {rest.length > 0 && (
-        <Reveal stagger className="mt-8 grid gap-8 sm:grid-cols-2">
+        <Reveal stagger className="mt-8 grid items-start gap-8 sm:grid-cols-2">
           {rest.map((slot) => (
             <div key={slot.caption}>
               <MediaFrame slot={slot} />

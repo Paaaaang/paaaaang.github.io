@@ -85,11 +85,12 @@ export function Reveal({
 
 export function useChapterAccent(
   ref: React.RefObject<HTMLElement | null>,
-  color: string,
+  color: string | null,
 ) {
   useEffect(() => {
     const el = ref.current
-    if (!el) return
+    // null 이면 색을 건드리지 않는다. 안쪽 요소가 직접 색을 정하는 챕터용.
+    if (!el || !color) return
 
     const apply = () => {
       // 색 전환 자체는 CSS transition 으로 처리해 매 프레임 쓰기를 피한다.
