@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { method } from '../content/profile'
 import { Reveal } from '../components/motion'
 import { MaskedLines, MOTION } from '../components/scroll'
+import { ChapterMark } from '../components/Chapter'
 import { useReducedMotion } from '../hooks/useMotionPreference'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -82,27 +83,21 @@ export function MethodScene() {
     <section
       ref={sectionRef}
       id="method"
+      aria-label="How I Work"
       className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 py-24 sm:px-10 lg:px-16 lg:py-0"
     >
-      <div className="mx-auto w-full max-w-6xl">
-        {/* ---- 머리말 ---- */}
-        <div className="lg:flex lg:items-end lg:justify-between lg:gap-12">
-          <div>
-            <Reveal>
-              <p className="font-mono text-[0.7rem] tracking-[0.26em] text-paper-faint uppercase">
-                방법
-              </p>
-            </Reveal>
+      <div className="mx-auto grid w-full max-w-6xl gap-y-10 lg:grid-cols-[10rem_minmax(0,1fr)] lg:gap-x-14">
+        <aside>
+          <ChapterMark index="04" label="How I Work" />
+        </aside>
 
-            <MaskedLines
-              lines={['일하는 순서']}
-              className="mt-6 text-chapter"
-              as="h2"
-            />
-          </div>
+        <div className="min-w-0">
+        {/* ---- 머리말 ---- */}
+        <div className="lg:flex lg:items-end lg:justify-between lg:gap-10">
+          <MaskedLines lines={['일하는 순서']} className="text-chapter" as="h2" />
 
           <Reveal delay={0.1}>
-            <p className="measure mt-6 text-[0.94rem] leading-[1.75] text-paper-dim lg:mt-0 lg:max-w-[34ch] lg:text-right">
+            <p className="measure mt-6 text-[0.94rem] leading-[1.75] text-paper-dim lg:mt-0 lg:max-w-[36ch] lg:text-right">
               {method.intro}
             </p>
           </Reveal>
@@ -199,6 +194,7 @@ export function MethodScene() {
             스크롤 — {String(active + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}
           </p>
         )}
+        </div>
       </div>
     </section>
   )

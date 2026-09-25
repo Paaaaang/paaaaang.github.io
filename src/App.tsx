@@ -9,42 +9,27 @@ const SceneCanvas = lazy(() =>
 import { Nav } from './components/Nav'
 import { Cursor } from './components/scroll'
 import { Hero } from './sections/Hero'
-import { Identity } from './sections/Identity'
-import { Proof } from './sections/Proof'
-import { CaseStudySection } from './sections/CaseStudySection'
+import { About } from './sections/About'
+import { SelectedWork } from './sections/SelectedWork'
+import { More } from './sections/More'
 import { MethodScene } from './sections/MethodScene'
-import { Limits } from './sections/Method'
-import { Credentials, Contact } from './sections/Credentials'
-import { caseStudies } from './content/profile'
-import { Reveal } from './components/motion'
+import { Retrospective } from './sections/Retrospective'
+import { Toolkit, Contact } from './sections/Credentials'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { useReducedMotion } from './hooks/useMotionPreference'
 
 /**
- * 경험 구간의 시작을 알리는 구분선.
+ * 챕터 순서. 각 챕터가 한 가지 질문에 답한다.
  *
- * 앞 섹션이 끝나자마자 01 이 튀어나오면 이게 한 덩어리라는 신호가 없다.
- * 회사 프로젝트가 아니라 직접 겪은 일들이라 '경험'으로 부른다.
+ * 00 Hero          누구인가
+ * 01 About         어떻게 일하는가
+ * 02 Selected Work 증거는 무엇인가
+ * 03 More          그 밖에
+ * 04 How I Work    일하는 순서
+ * 05 Retrospective 틀리고 바꾼 것
+ * 06 Toolkit       무엇을 다루나
+ * 07 Contact       연락
  */
-function ExperienceLabel() {
-  return (
-    <div className="px-6 pt-10 sm:px-10 lg:px-16">
-      <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <div className="rule flex items-baseline justify-between gap-6 pt-8">
-            <p className="font-mono text-[0.7rem] tracking-[0.26em] text-paper-faint uppercase">
-              경험 · Experience
-            </p>
-            <p className="font-mono text-[0.7rem] tracking-[0.2em] tnum text-paper-faint">
-              03
-            </p>
-          </div>
-        </Reveal>
-      </div>
-    </div>
-  )
-}
-
 export default function App() {
   const reduced = useReducedMotion()
   useSmoothScroll(!reduced)
@@ -72,15 +57,12 @@ export default function App() {
 
       <main>
         <Hero />
-        <Identity />
-        <Proof />
-        <ExperienceLabel />
-        {caseStudies.map((study) => (
-          <CaseStudySection key={study.id} study={study} />
-        ))}
+        <About />
+        <SelectedWork />
+        <More />
         <MethodScene />
-        <Limits />
-        <Credentials />
+        <Retrospective />
+        <Toolkit />
       </main>
 
       <Contact />

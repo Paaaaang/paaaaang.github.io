@@ -101,14 +101,19 @@ export function Row({
   label,
   children,
   className,
+  wide = false,
 }: {
   label: string
   children: ReactNode
   className?: string
+  /** 구조도와 자료처럼 폭이 필요한 행. 머리를 위에 두고 내용이 폭을 다 쓴다. */
+  wide?: boolean
 }) {
   return (
     <div
-      className={`rule grid gap-y-4 pt-7 md:grid-cols-[7.5rem_minmax(0,1fr)] md:gap-x-10 ${className ?? ''}`}
+      className={`rule grid gap-y-5 pt-7 ${
+        wide ? '' : 'md:grid-cols-[7.5rem_minmax(0,1fr)] md:gap-x-10'
+      } ${className ?? ''}`}
     >
       <Reveal>
         <h3 className="font-mono text-[0.7rem] tracking-[0.22em] text-paper-faint uppercase">

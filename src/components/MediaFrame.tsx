@@ -11,15 +11,19 @@ import { ClipReveal, useParallax } from './scroll'
  * "준비 중"이라고 얼버무리지 않고, 어떤 자료가 올 자리인지 그대로 적는다.
  */
 
-const RATIO: Record<NonNullable<MediaSlot['ratio']>, string> = {
+const RATIO: Record<NonNullable<MediaSlot['ratio']>, string | undefined> = {
   wide: '16 / 7',
   video: '16 / 9',
   square: '1 / 1',
   portrait: '4 / 5',
+  // 원본 비율. 문서 캡처는 잘리면 읽을 수 없다.
+  natural: undefined,
 }
 
 export function MediaFrame({ slot }: { slot: MediaSlot }) {
   const aspect = RATIO[slot.ratio ?? 'video']
+  // 빈 프레임은 원본 비율을 모르니 가로형으로 둔다.
+  const emptyAspect = aspect ?? '16 / 9'
   const frameRef = useRef<HTMLElement>(null)
 
   // 자료 프레임이 본문보다 아주 조금 느리게 흐른다.
@@ -29,20 +33,29 @@ export function MediaFrame({ slot }: { slot: MediaSlot }) {
   return (
     <figure ref={frameRef} className="m-0">
       {slot.src ? (
-        <ClipReveal className="overflow-hidden rounded-sm border border-ink-line bg-ink-raised">
-          <img
-            src={slot.src}
-            alt={slot.alt ?? slot.caption}
-            loading="lazy"
-            decoding="async"
-            className="w-full object-cover"
-            style={{ aspectRatio: aspect }}
-          />
+        <ClipReveal
+          className={`overflow-hidden rounded-sm border border-ink-line ${
+            // 흰 바탕 문서는 종이 한 장처럼 여백을 둬서 잉크 배경과 부딪히지 않게 한다.
+            slot.light ? 'bg-[#f4f2ee] p-4 sm:p-6' : 'bg-ink-raised'
+          }`}
+        >
+          {/* 문서 캡처는 작게 보면 글자가 안 읽힌다. 원본을 새 탭으로 연다. */}
+          <a href={slot.src} target="_blank" rel="noopener" data-cursor-label="원본" className="block">
+            <img
+              src={slot.src}
+              alt={slot.alt ?? slot.caption}
+              loading="lazy"
+              decoding="async"
+              className={`w-full ${aspect ? 'object-cover' : 'h-auto'} ${slot.light ? 'mx-auto max-w-[640px]' : ''}`}
+              style={aspect ? { aspectRatio: aspect } : undefined}
+            />
+            <span className="sr-only">원본 크기로 보기 (새 탭)</span>
+          </a>
         </ClipReveal>
       ) : (
         <div
           className="relative grid w-full place-items-center rounded-sm border border-dashed border-ink-line bg-ink-raised/60"
-          style={{ aspectRatio: aspect }}
+          style={{ aspectRatio: emptyAspect }}
         >
           {/* 빈 프레임임을 드러내는 옅은 격자. 회색 덩어리보다 의도가 읽힌다. */}
           <div
@@ -83,33 +96,25 @@ export function MediaFrame({ slot }: { slot: MediaSlot }) {
 }
 
 /**
- * 케이스 스터디의 자료 묶음.
+ * 경험의 자료 묶음.
  *
- * 첫 자료는 폭을 다 쓰고 나머지는 2열로 간다. 전부 같은 크기로 늘어놓으면
- * 어떤 게 핵심 자료인지 구분되지 않는다.
+ * 2열 격자에 놓되, 따로 정하지 않으면 첫 자료만 폭을 다 쓴다.
+ * 전부 같은 크기로 늘어놓으면 어떤 게 핵심 자료인지 구분되지 않는다.
+ * 가로로 긴 캡처처럼 반 폭에서 읽히지 않는 자료는 span 을 full 로 준다.
  */
 export function MediaGallery({ slots }: { slots: MediaSlot[] }) {
   if (slots.length === 0) return null
 
-  const [lead, ...rest] = slots
-
   return (
-    <div>
-      {lead && (
-        <Reveal>
-          <MediaFrame slot={lead} />
-        </Reveal>
-      )}
-
-      {rest.length > 0 && (
-        <Reveal stagger className="mt-8 grid items-start gap-8 sm:grid-cols-2">
-          {rest.map((slot) => (
-            <div key={slot.caption}>
-              <MediaFrame slot={slot} />
-            </div>
-          ))}
-        </Reveal>
-      )}
-    </div>
+    <Reveal stagger className="grid items-start gap-8 sm:grid-cols-2">
+      {slots.map((slot, i) => {
+        const full = (slot.span ?? (i === 0 ? 'full' : 'half')) === 'full'
+        return (
+          <div key={slot.caption} className={full ? 'sm:col-span-2' : undefined}>
+            <MediaFrame slot={slot} />
+          </div>
+        )
+      })}
+    </Reveal>
   )
 }

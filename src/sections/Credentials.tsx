@@ -3,6 +3,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { awards, certificates, profile, skillGroups, emailAddress } from '../content/profile'
 import { Reveal } from '../components/motion'
+import { Chapter, ChapterMark } from '../components/Chapter'
 import { Magnetic } from '../components/Magnetic'
 import { MOTION } from '../components/scroll'
 import { useReducedMotion } from '../hooks/useMotionPreference'
@@ -71,10 +72,10 @@ function AwardsStrip() {
   }, [horizontal])
 
   return (
-    <div ref={sectionRef} className="mt-24 overflow-hidden">
+    <div ref={sectionRef} className="mt-20 overflow-hidden">
       <Reveal>
         <h3 className="font-mono text-[0.7rem] tracking-[0.22em] text-paper-faint uppercase">
-          수상 · 6회
+          수상 · {awards.length}
         </h3>
       </Reveal>
 
@@ -131,134 +132,123 @@ function AwardsStrip() {
   )
 }
 
-/** 역량 · 자격 · 수상. 스캔하듯 읽는 구간이라 표에 가깝게 짠다. */
-export function Credentials() {
+/** 06 Toolkit — 역량 · 자격 · 수상. 스캔하듯 읽는 구간이라 표에 가깝게 짠다. */
+export function Toolkit() {
   return (
-    <section id="credentials" className="relative px-6 py-24 sm:px-10 lg:px-16 lg:py-32">
-      <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <p className="font-mono text-[0.7rem] tracking-[0.26em] text-paper-faint uppercase">
-            역량
-          </p>
-        </Reveal>
-
-        <div className="mt-14 grid gap-14 lg:grid-cols-3 lg:gap-12">
-          {skillGroups.map((group, i) => (
-            <Reveal key={group.group} delay={i * 0.06}>
-              <div className="rule pt-7">
-                <h3 className="text-sm font-bold tracking-[-0.01em]">{group.group}</h3>
-                <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2.5">
-                  {group.items.map((item) => (
-                    <li key={item} className="text-sm text-paper-dim">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
-        {/* ---- 자격증 ---- */}
-        <div className="mt-28">
-          <Reveal>
-            <h3 className="font-mono text-[0.7rem] tracking-[0.22em] text-paper-faint uppercase">
-              자격증
-            </h3>
+    <Chapter id="toolkit" index="06" label="Toolkit" title={['다루는 것과 받은 것']}>
+      <div className="mt-14 grid gap-12 md:grid-cols-3 md:gap-8">
+        {skillGroups.map((group, i) => (
+          <Reveal key={group.group} delay={i * 0.06}>
+            <div className="rule pt-6">
+              <h3 className="text-sm font-bold tracking-[-0.01em]">{group.group}</h3>
+              <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+                {group.items.map((item) => (
+                  <li key={item} className="text-sm text-paper-dim">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </Reveal>
-          <Reveal stagger className="rule mt-7">
-            {certificates.map((cert) => (
-              <div
-                key={cert.name}
-                className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink-line py-5"
-              >
-                <span className="font-bold tracking-[-0.015em]">{cert.name}</span>
-                <span className="text-sm text-paper-dim">{cert.org}</span>
-                <span className="font-mono text-sm tnum text-paper-faint">{cert.date}</span>
-              </div>
-            ))}
-          </Reveal>
-        </div>
-
-        <AwardsStrip />
-
+        ))}
       </div>
-    </section>
+
+      {/* ---- 자격증 ---- */}
+      <div className="mt-20">
+        <Reveal>
+          <h3 className="font-mono text-[0.7rem] tracking-[0.22em] text-paper-faint uppercase">
+            자격증 · {certificates.length}
+          </h3>
+        </Reveal>
+        <Reveal stagger className="rule mt-6">
+          {certificates.map((cert) => (
+            <div
+              key={cert.name}
+              className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-6 gap-y-1 border-b border-ink-line py-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)_5rem]"
+            >
+              <span className="font-bold tracking-[-0.015em]">{cert.name}</span>
+              <span className="hidden text-sm text-paper-dim sm:block">{cert.org}</span>
+              <span className="text-right font-mono text-sm tnum text-paper-faint">{cert.date}</span>
+            </div>
+          ))}
+        </Reveal>
+      </div>
+
+      <AwardsStrip />
+    </Chapter>
   )
 }
 
-/** 마지막 화면. 연락 수단은 이메일과 GitHub 뿐이다. */
+/** 07 Contact — 마지막 화면. 연락 수단은 이메일, GitHub, 블로그뿐이다. */
 export function Contact() {
   const email = emailAddress()
 
   return (
-    <footer
-      id="contact"
-      className="relative px-6 pt-28 pb-16 sm:px-10 lg:px-16 lg:pt-44"
-    >
-      <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <p className="font-mono text-[0.7rem] tracking-[0.26em] text-paper-faint uppercase">
-            연락
-          </p>
-        </Reveal>
+    <footer id="contact" aria-label="Contact" className="relative px-6 pt-28 pb-16 sm:px-10 lg:px-16 lg:pt-40">
+      <div className="mx-auto grid max-w-6xl gap-y-10 lg:grid-cols-[10rem_minmax(0,1fr)] lg:gap-x-14">
+        <aside>
+          <ChapterMark index="07" label="Contact" />
+        </aside>
 
-        <Reveal delay={0.06}>
-          <h2 className="mt-8 max-w-[16ch] text-display">
-            만들 수 있는
-            <br />
-            <span style={{ color: 'var(--accent)' }}>기획을 내놓겠습니다</span>
-          </h2>
-        </Reveal>
+        <div className="min-w-0">
+          <Reveal>
+            <h2 className="max-w-[16ch] text-display">
+              만들 수 있는
+              <br />
+              <span style={{ color: 'var(--accent)' }}>기획을 내놓겠습니다</span>
+            </h2>
+          </Reveal>
 
-        <Reveal delay={0.12}>
-          <div className="mt-16 flex flex-wrap items-center gap-x-10 gap-y-6">
-            <Magnetic>
-              <a
-                href={`mailto:${email}`}
-                className="group inline-flex items-baseline gap-3 text-lede font-bold tracking-[-0.02em] transition-colors hover:text-[--accent]"
-              >
-                {email}
-                <span
-                  aria-hidden="true"
-                  className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+          <Reveal delay={0.1}>
+            <div className="mt-14 flex flex-wrap items-center gap-x-10 gap-y-6">
+              <Magnetic>
+                <a
+                  href={`mailto:${email}`}
+                  data-cursor-label="메일"
+                  className="group inline-flex items-baseline gap-3 text-lede font-bold tracking-[-0.02em] transition-colors hover:text-(--accent)"
                 >
-                  →
-                </span>
-              </a>
-            </Magnetic>
+                  {email}
+                  <span
+                    aria-hidden="true"
+                    className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+                  >
+                    →
+                  </span>
+                </a>
+              </Magnetic>
 
-            <Magnetic>
-              <a
-                href={profile.github}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="text-lede text-paper-dim transition-colors hover:text-paper"
-              >
-                GitHub
-              </a>
-            </Magnetic>
+              <Magnetic>
+                <a
+                  href={profile.github}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-lede text-paper-dim transition-colors hover:text-paper"
+                >
+                  GitHub
+                </a>
+              </Magnetic>
 
-            <Magnetic>
-              <a
-                href={profile.blog}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="text-lede text-paper-dim transition-colors hover:text-paper"
-              >
-                블로그
-              </a>
-            </Magnetic>
+              <Magnetic>
+                <a
+                  href={profile.blog}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-lede text-paper-dim transition-colors hover:text-paper"
+                >
+                  블로그
+                </a>
+              </Magnetic>
+            </div>
+          </Reveal>
+
+          <div className="rule mt-24 flex flex-wrap items-center justify-between gap-4 pt-7 text-xs text-paper-faint">
+            <span>
+              © {new Date().getFullYear()} {profile.name} · {profile.role}
+            </span>
+            <span className="font-mono tracking-[0.12em]">
+              {profile.education.school} {profile.education.major} · {profile.education.minor}
+            </span>
           </div>
-        </Reveal>
-
-        <div className="rule mt-24 flex flex-wrap items-center justify-between gap-4 pt-7 text-xs text-paper-faint">
-          <span>
-            © {new Date().getFullYear()} {profile.name} · {profile.role}
-          </span>
-          <span className="font-mono tracking-[0.12em]">
-            {profile.education.school} {profile.education.major} · {profile.education.minor}
-          </span>
         </div>
       </div>
     </footer>

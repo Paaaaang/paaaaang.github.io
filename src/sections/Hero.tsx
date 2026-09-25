@@ -158,7 +158,7 @@ export function Hero() {
               <a
                 href={profile.resumePdf}
                 download
-                className="group inline-flex items-center gap-2 text-paper transition-colors hover:text-[--accent]"
+                className="group inline-flex items-center gap-2 text-paper transition-colors hover:text-(--accent)"
               >
                 이력서 PDF
                 <span
@@ -172,10 +172,10 @@ export function Hero() {
 
             <button
               type="button"
-              onClick={() => scrollToSection('who')}
+              onClick={() => scrollToSection('work')}
               className="group inline-flex items-center gap-2 text-paper-dim transition-colors hover:text-paper"
             >
-              어떤 사람인지 보기
+              경험 보기
               <span
                 aria-hidden="true"
                 className="inline-block transition-transform duration-300 group-hover:translate-y-0.5"

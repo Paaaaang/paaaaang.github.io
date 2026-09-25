@@ -18,7 +18,7 @@ import {
 /**
  * 문서 스크롤 진행도를 읽어 두 값으로 나눈다.
  *
- * - progress: 흩어짐(0) → 정렬(1). 문서 앞 12% 안에서 끝난다.
+ * - progress: 흩어짐(0) → 정렬(1). 첫 화면을 벗어나기 전에 끝난다.
  * - visibility: 배경의 존재감. 정렬이 끝나면 옅어진다.
  *
  * 정렬은 히어로에서 보여주는 장면이다. 케이스 스터디를 읽는 동안에도
@@ -33,13 +33,16 @@ function useScrollProgress(
     let frame = 0
 
     const read = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight
-      const raw = max > 0 ? window.scrollY / max : 0
+      // 문서 비율로 재면 챕터가 늘 때마다 시점이 밀린다. 화면 높이로 잰다.
+      const vh = window.innerHeight || 1
+      const y = window.scrollY
 
-      target.current = Math.min(1, raw / 0.07)
+      // 첫 화면을 0.9화면만큼 내리는 동안 정렬이 끝난다.
+      target.current = Math.min(1, y / (vh * 0.9))
 
-      // 7%까지 온전히 보이고, 13%에 이르면 0.2 까지 내려간다.
-      const fade = Math.min(1, Math.max(0, (raw - 0.07) / 0.06))
+      // 한 화면까지는 온전히 보이고, 1.8화면에 이르면 0.2 까지 내려간다.
+      // About 을 읽을 무렵에는 이미 물러나 있다.
+      const fade = Math.min(1, Math.max(0, (y - vh) / (vh * 0.8)))
       visibility.current = 1 - fade * 0.8
 
       frame = 0

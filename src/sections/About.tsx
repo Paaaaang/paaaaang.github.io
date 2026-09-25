@@ -35,7 +35,7 @@ export function About() {
               </span>
 
               <span className="min-w-0">
-                <span className="block text-[clamp(1.3rem,2.4vw,1.9rem)] leading-[1.25] font-bold tracking-[-0.03em] transition-colors duration-300 group-hover:text-[--accent]">
+                <span className="block text-[clamp(1.3rem,2.4vw,1.9rem)] leading-[1.25] font-bold tracking-[-0.03em] transition-colors duration-300 group-hover:text-(--accent)">
                   {pillar.title}
                 </span>
                 <span className="measure mt-4 block text-[0.95rem] leading-[1.8] text-paper-dim">

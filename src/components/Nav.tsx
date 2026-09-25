@@ -57,10 +57,10 @@ export function Nav() {
   return (
     <>
       <a
-        href="#proof"
+        href="#about"
         onClick={(e) => {
           e.preventDefault()
-          scrollToSection('proof')
+          scrollToSection('about')
         }}
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-sm focus:bg-paper focus:px-4 focus:py-2 focus:text-sm focus:text-ink"
       >
@@ -114,28 +114,21 @@ export function Nav() {
       {/* 넓은 화면: 세로 목차 */}
       <nav
         aria-label="섹션 목차"
-        className="fixed top-1/2 right-8 z-30 hidden -translate-y-1/2 lg:block"
+        className="fixed top-1/2 right-6 z-30 hidden -translate-y-1/2 lg:block"
       >
+        {/* 이름은 각 챕터 레일과 상단 바에 이미 있다. 여기서는 위치만 점으로 보인다.
+            이름까지 띄우면 넓은 화면에서 본문 오른쪽 끝과 겹친다. */}
         <ul className="space-y-3.5">
           {sections.map((section) => {
             const isActive = section.id === active
             return (
-              <li key={section.id} className="flex items-center justify-end gap-3">
-                <span
-                  className={`font-mono text-[0.68rem] tracking-[0.14em] transition-all duration-300 ${
-                    isActive
-                      ? 'text-paper opacity-100'
-                      : 'text-paper-faint opacity-0 group-hover:opacity-100'
-                  }`}
-                  aria-hidden={!isActive}
-                >
-                  {section.label}
-                </span>
+              <li key={section.id} className="flex items-center justify-end">
                 <button
                   type="button"
                   onClick={() => scrollToSection(section.id)}
                   aria-label={`${section.label} 섹션으로 이동`}
                   aria-current={isActive ? 'true' : undefined}
+                  title={section.label}
                   className="block h-2 w-2 rounded-full transition-all duration-300 hover:scale-150"
                   style={{
                     background: isActive ? 'var(--accent)' : 'var(--color-ink-line)',

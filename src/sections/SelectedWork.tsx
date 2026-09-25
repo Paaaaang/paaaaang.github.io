@@ -2,16 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { caseStudies, type CaseStudy } from '../content/profile'
 import { Chapter, Row } from '../components/Chapter'
-import { Reveal, useChapterAccent } from '../components/motion'
+import { CountUp, Reveal, useChapterAccent } from '../components/motion'
 import { MaskedLines } from '../components/scroll'
 import { MediaGallery } from '../components/MediaFrame'
+import { Diagram } from '../components/diagrams'
 import { scrollToSection } from '../hooks/useSmoothScroll'
 
 /**
  * 02 Selected Work — 대표 경험 세 가지.
  *
  * 세 경험 모두 같은 순서로 읽힌다.
- * 문제 → 목표 → 핵심 결정 → 자료 → 결과 → 회고.
+ * 문제 → 목표 → 핵심 결정 → 구조도 → 자료 → 결과 → 회고.
  * 기획자가 실제로 쓰는 문서 순서라 읽는 사람이 다음에 무엇이 올지 안다.
  * 그래야 경험끼리 비교가 되고 3분 안에 하나를 끝까지 읽는다.
  *
@@ -213,7 +214,17 @@ function CaseArticle({ study }: { study: CaseStudy }) {
           </ol>
         </Row>
 
-        <Row label="자료">
+        {study.diagrams && study.diagrams.length > 0 && (
+          <Row label="구조도" wide>
+            <div className="grid gap-6">
+              {study.diagrams.map((key) => (
+                <Diagram key={key} id={key} />
+              ))}
+            </div>
+          </Row>
+        )}
+
+        <Row label="자료" wide>
           <MediaGallery slots={study.media} />
         </Row>
 
@@ -225,7 +236,7 @@ function CaseArticle({ study }: { study: CaseStudy }) {
                   className="text-[clamp(1.75rem,3.2vw,2.6rem)] leading-none font-bold tracking-[-0.04em] tnum"
                   style={{ color: study.accent }}
                 >
-                  {result.value}
+                  <ResultValue value={result.value} />
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-paper-dim">{result.label}</p>
               </div>
@@ -243,6 +254,13 @@ function CaseArticle({ study }: { study: CaseStudy }) {
       </div>
     </article>
   )
+}
+
+/** "143명"처럼 숫자 하나로 된 값만 세어 올린다. "5 → 2초" 같은 값은 그대로 둔다. */
+function ResultValue({ value }: { value: string }) {
+  const m = value.match(/^(\d+)([^\d→]*)$/)
+  if (!m) return <>{value}</>
+  return <CountUp to={Number(m[1])} suffix={m[2]} />
 }
 
 function Meta({ term, value }: { term: string; value: string }) {
