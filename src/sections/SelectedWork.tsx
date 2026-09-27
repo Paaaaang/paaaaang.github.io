@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { OPEN_CASE_EVENT, revealCase } from '../components/caseAccordion'
+import { useReducedMotion } from '../hooks/useMotionPreference'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { caseStudies, timeline, type CaseStudy } from '../content/profile'
 import { Chapter, Row } from '../components/Chapter'
@@ -112,7 +115,7 @@ function ProjectSummary() {
                       {item.href ? (
                         <button
                           type="button"
-                          onClick={() => scrollToSection(item.href!)}
+                          onClick={() => revealCase(item.href!)}
                           data-cursor-label="보기"
                           className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 py-4 text-left"
                         >
@@ -146,7 +149,7 @@ function CaseRail({ active }: { active: number }) {
             <li key={study.id}>
               <button
                 type="button"
-                onClick={() => scrollToSection(study.id)}
+                onClick={() => revealCase(study.id)}
                 aria-current={on ? 'true' : undefined}
                 className="group flex w-full items-center gap-3 py-2 text-left"
               >
@@ -194,7 +197,51 @@ function splitTitle(title: string): string[] {
 /** 경험 하나. 모든 경험이 같은 행 순서를 쓴다. */
 function CaseArticle({ study }: { study: CaseStudy }) {
   const ref = useRef<HTMLElement>(null)
+  const detailRef = useRef<HTMLDivElement>(null)
+  const reduced = useReducedMotion()
+  // 대표 경험 하나는 끝까지 읽히게 열어 둔다. 나머지는 요약과 결과만.
+  const [open, setOpen] = useState(study.index === '01')
   useChapterAccent(ref, study.accent)
+
+  const toggle = (next: boolean) => setOpen(next)
+
+  // 바깥(About · 타임라인 · 레일)에서 이 경험으로 이동하면 먼저 펼친다.
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      if ((e as CustomEvent<string>).detail === study.id) setOpen(true)
+    }
+    window.addEventListener(OPEN_CASE_EVENT, onOpen)
+    return () => window.removeEventListener(OPEN_CASE_EVENT, onOpen)
+  }, [study.id])
+
+  // 접힌 내용도 Ctrl+F 로 찾으면 브라우저가 beforematch 를 보낸다. 그때 펼친다.
+  useEffect(() => {
+    const el = detailRef.current
+    if (!el) return
+    const onMatch = () => setOpen(true)
+    el.addEventListener('beforematch', onMatch)
+    return () => el.removeEventListener('beforematch', onMatch)
+  }, [])
+
+  useEffect(() => {
+    const el = detailRef.current
+    if (!el) return
+    if (!open) {
+      // until-found 를 모르는 브라우저는 평범한 hidden 으로 동작한다.
+      el.setAttribute('hidden', 'until-found')
+      return
+    }
+    el.removeAttribute('hidden')
+    if (reduced) return
+    const tween = gsap.fromTo(
+      el,
+      { height: 0, opacity: 0 },
+      { height: 'auto', opacity: 1, duration: 0.6, ease: 'power3.out', clearProps: 'height,opacity' },
+    )
+    return () => {
+      tween.kill()
+    }
+  }, [open, reduced])
 
   return (
     <article ref={ref} id={study.id} aria-label={study.title} className="scroll-mt-24">
@@ -272,8 +319,50 @@ function CaseArticle({ study }: { study: CaseStudy }) {
         </Reveal>
       </header>
 
-      {/* ---- 본문 ---- */}
-      <div className="mt-16 space-y-14">
+      {/* ---- 결과: 접혀 있어도 늘 보인다 ---- */}
+      <Reveal stagger className="mt-12 grid gap-x-8 gap-y-7 border-t border-ink-line pt-8 sm:grid-cols-2 lg:grid-cols-3">
+        {study.results.map((result) => (
+          <div key={result.label}>
+            <p
+              className="text-[clamp(1.6rem,2.8vw,2.3rem)] leading-none font-bold tracking-[-0.04em] tnum"
+              style={{ color: study.accent }}
+            >
+              <ResultValue value={result.value} />
+            </p>
+            <p className="mt-2.5 text-sm leading-relaxed text-paper-dim">{result.label}</p>
+          </div>
+        ))}
+      </Reveal>
+
+      <button
+        type="button"
+        onClick={() => toggle(!open)}
+        aria-expanded={open}
+        aria-controls={`${study.id}-detail`}
+        className="group mt-10 flex w-full items-center justify-between gap-4 rounded-sm border border-ink-line px-5 py-4 text-left transition-colors hover:border-(--accent)"
+      >
+        <span>
+          <span className="block text-[0.95rem] font-bold tracking-[-0.02em]">
+            {open ? '접기' : '자세히 보기'}
+          </span>
+          {!open && (
+            <span className="mt-0.5 block text-xs text-paper-faint">
+              문제 · 목표 · 핵심 결정 {study.actions.length}개 · 구조도 · 자료 · 회고
+            </span>
+          )}
+        </span>
+        <span
+          aria-hidden="true"
+          className="font-mono text-lg transition-transform duration-300"
+          style={{ color: study.accent, transform: open ? 'rotate(180deg)' : undefined }}
+        >
+          ↓
+        </span>
+      </button>
+
+      {/* ---- 상세: 접으면 숨기되 브라우저 찾기(Ctrl+F)로는 찾아지게 until-found ---- */}
+      <div ref={detailRef} id={`${study.id}-detail`} className="overflow-hidden">
+      <div className="mt-14 space-y-14">
         <Row label="문제">
           <Reveal stagger className="space-y-3">
             {study.problem.map((line) => (
@@ -347,22 +436,6 @@ function CaseArticle({ study }: { study: CaseStudy }) {
           <MediaGallery slots={study.media} />
         </Row>
 
-        <Row label="결과">
-          <Reveal stagger className="grid gap-x-8 gap-y-9 sm:grid-cols-2">
-            {study.results.map((result) => (
-              <div key={result.label}>
-                <p
-                  className="text-[clamp(1.75rem,3.2vw,2.6rem)] leading-none font-bold tracking-[-0.04em] tnum"
-                  style={{ color: study.accent }}
-                >
-                  <ResultValue value={result.value} />
-                </p>
-                <p className="mt-3 text-sm leading-relaxed text-paper-dim">{result.label}</p>
-              </div>
-            ))}
-          </Reveal>
-        </Row>
-
         <Row label="회고">
           <Reveal>
             <blockquote className="border-l-2 pl-6" style={{ borderColor: study.accent }}>
@@ -371,8 +444,25 @@ function CaseArticle({ study }: { study: CaseStudy }) {
           </Reveal>
         </Row>
       </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          toggle(false)
+          revealCaseTop(study.id)
+        }}
+        className="mt-12 font-mono text-[0.7rem] tracking-[0.18em] text-paper-faint uppercase transition-colors hover:text-paper"
+      >
+        접기 ↑
+      </button>
+      </div>
     </article>
   )
+}
+
+/** 아래쪽 접기 버튼을 누르면 그 경험 머리로 돌아간다. 접힌 뒤 엉뚱한 곳에 남지 않게. */
+function revealCaseTop(id: string) {
+  requestAnimationFrame(() => scrollToSection(id))
 }
 
 /** "143명"처럼 숫자 하나로 된 값만 세어 올린다. "5 → 2초" 같은 값은 그대로 둔다. */

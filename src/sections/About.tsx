@@ -1,7 +1,7 @@
 import { about } from '../content/profile'
 import { Chapter } from '../components/Chapter'
 import { Reveal, ScrubbedWords } from '../components/motion'
-import { scrollToSection } from '../hooks/useSmoothScroll'
+import { revealCase } from '../components/caseAccordion'
 
 /**
  * 01 About — 한 문장과 세 기둥.
@@ -23,7 +23,7 @@ export function About() {
           <Reveal as="li" key={pillar.n} delay={i * 0.06}>
             <button
               type="button"
-              onClick={() => scrollToSection(pillar.proof.href)}
+              onClick={() => revealCase(pillar.proof.href)}
               data-cursor-label="보기"
               className="group rule grid w-full grid-cols-[2.25rem_minmax(0,1fr)] gap-x-4 gap-y-5 py-8 text-left sm:grid-cols-[3rem_minmax(0,1fr)_minmax(0,13rem)] sm:gap-x-8 lg:py-10"
             >
