@@ -50,6 +50,32 @@ docs/                    개선 계획서와 아트디렉션 기록
 빈 자리에는 "여기에 무엇이 들어갈 자리인지"가 적힌 프레임이 그려지고,
 파일을 넣어도 크기가 같아서 레이아웃이 움직이지 않습니다.
 
+## 시스템 아키텍처 (Cloudcraft)
+
+세 경험(전대주주 · TAP TO ME · PRISM)의 아키텍처 그림은 Cloudcraft 블루프린트를 **코드로** 만듭니다.
+그림의 원본은 각 저장소 README 의 시스템 아키텍처 그림이고(전대주주는 README 에 그림이 없어 저장소 코드 기준),
+`scripts/architecture/*.mjs` 에 블록 · 선 · 이름표로 옮겨 두었습니다.
+
+**키 넣기** — Cloudcraft 앱의 Manage API keys › Create API Key 에서 쓰기 권한이 있는 키를 만든 뒤
+
+- 배포에서 자동으로: 저장소 Settings › Secrets and variables › Actions 에 `CLOUDCRAFT_API_KEY` 를 추가합니다.
+  `main` 에 푸시할 때마다 빌드 전에 블루프린트를 고치고 그림을 새로 받습니다.
+- 내 컴퓨터에서: `CLOUDCRAFT_API_KEY=... npm run architecture` 한 번이면 됩니다. 받은 파일을 커밋해 두면 API 가 실패해도 그 그림을 씁니다.
+
+**무엇이 생기나**
+
+| 무엇 | 어디에 |
+|---|---|
+| Cloudcraft 블루프린트 "포트폴리오 · …" 3개 | 내 Cloudcraft 계정. 이름이 같으면 고치고(PUT) 없으면 만듭니다(POST). 여러 번 돌려도 늘어나지 않습니다 |
+| 그림 `<key>.svg` 와 원본 크기 `<key>.size.json` | `src/assets/architecture/` |
+| 사이트 | 파일이 있는 경험의 자료 맨 앞(PRISM 은 PRISM 사진 앞)에 `아키텍처` 프레임으로 들어갑니다. 없으면 아무것도 그리지 않습니다 |
+
+- 키 없이 검사만: `npm run architecture -- --dry-run` — id 중복, 없는 블록을 가리키는 선, 색 형식을 확인하고
+  보낼 JSON 과 근사 미리보기 SVG 를 `scripts/architecture/out/` 에 씁니다(커밋하지 않음).
+- Cloudcraft 화면에서 손본 그림을 지키려면 `scripts/architecture.config.json` 에서 그 항목의 `update` 를 `false` 로 둡니다. 코드가 원본이라 그대로 두면 다음 배포에서 덮어씁니다.
+- API 가 data 를 거절하면 이유가 로그에 찍히고, 거절된 JSON 이 `scripts/architecture/out/<key>.rejected.json` 에 남습니다. 실패해도 배포는 계속됩니다.
+- SVG 에서 한글이 네모로 보이면 설정의 `format` 을 `png` 로 바꿔 다시 받습니다.
+
 ## 배포
 
 `main` 브랜치에 푸시하면 GitHub Actions가 빌드해 GitHub Pages로 올립니다.

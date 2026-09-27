@@ -1,8 +1,35 @@
 {
-  "$comment": "Cloudcraft 블루프린트 ID와 저장 위치. ID는 비밀이 아니다. API 키만 비밀이다.",
+  "$comment": [
+    "Cloudcraft 블루프린트 목록. 그림 자체는 module 이 가리키는 코드에 있다.",
+    "그림의 원본은 각 저장소 README 의 '시스템 아키텍처' 그림이다(전대주주는 README 에 그림이 없어 저장소 코드 기준). 거기 없는 상자와 화살표는 넣지 않는다.",
+    "key 는 저장 파일 이름(src/assets/architecture/<key>.svg), name 은 Cloudcraft 에서 같은 블루프린트를 찾는 기준이다. name 을 바꾸면 새 블루프린트가 생긴다.",
+    "id 를 비워 두면 같은 이름을 찾아 고치고, 없으면 새로 만든다. id 는 비밀이 아니다. API 키만 비밀이다.",
+    "update 를 false 로 두면 Cloudcraft 화면에서 손본 그림을 덮어쓰지 않고 내보내기만 한다. format 은 svg 또는 png."
+  ],
   "blueprints": [
-    { "id": "", "out": "public/media/edge-ai/ttm-architecture.svg", "label": "TAP TO ME 시스템 아키텍처" },
-    { "id": "", "out": "public/media/edge-ai/prism-architecture.svg", "label": "PRISM 시스템 아키텍처" },
-    { "id": "", "out": "public/media/interview-ops/architecture.svg", "label": "면접 운영 시스템 아키텍처" }
+    {
+      "key": "interview-ops",
+      "name": "포트폴리오 · 전대주주 면접 운영 시스템",
+      "module": "./architecture/interview-ops.mjs",
+      "id": "",
+      "update": true,
+      "format": "svg"
+    },
+    {
+      "key": "ttm",
+      "name": "포트폴리오 · TAP TO ME",
+      "module": "./architecture/ttm.mjs",
+      "id": "",
+      "update": true,
+      "format": "svg"
+    },
+    {
+      "key": "prism",
+      "name": "포트폴리오 · PRISM",
+      "module": "./architecture/prism.mjs",
+      "id": "",
+      "update": true,
+      "format": "svg"
+    }
   ]
 }

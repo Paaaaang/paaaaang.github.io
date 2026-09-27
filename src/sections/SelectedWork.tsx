@@ -4,6 +4,7 @@ import { OPEN_CASE_EVENT, revealCase } from '../components/caseAccordion'
 import { useReducedMotion } from '../hooks/useMotionPreference'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { caseStudies, timeline, type CaseStudy } from '../content/profile'
+import { withArchitecture } from '../content/architecture'
 import { Chapter, Row } from '../components/Chapter'
 import { CountUp, Reveal, useChapterAccent } from '../components/motion'
 import { MaskedLines } from '../components/scroll'
@@ -433,7 +434,8 @@ function CaseArticle({ study }: { study: CaseStudy }) {
         )}
 
         <Row label="자료" wide>
-          <MediaGallery slots={study.media} />
+          {/* Cloudcraft 아키텍처 SVG 가 내보내져 있을 때만 앞에 끼운다. */}
+          <MediaGallery slots={withArchitecture(study.id, study.media)} />
         </Row>
 
         <Row label="회고">
