@@ -202,3 +202,166 @@
   opacity: 1;
   transform: none;
 }
+
+/* ------------------------------------------------------------------ */
+/* 인쇄 · PDF                                                           */
+/*                                                                    */
+/* scripts/export-pdf.mjs 가 이 규칙으로 사이트를 A4 PDF 로 찍는다.       */
+/* 모션 축소(정적 문서) 상태를 전제로 화면용 장치만 걷어내고,             */
+/* 종이 바탕은 그대로 둔다.                                             */
+/* ------------------------------------------------------------------ */
+@media print {
+  /* 여백까지 종이색으로 칠한다. @page 에서는 토큰(var)이 풀리지 않아 값을 직접 쓴다.
+     --color-ink 와 같은 값이다. */
+  @page {
+    background: #f4f1ea;
+  }
+
+  :root {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html,
+  body {
+    background: var(--color-ink) !important;
+    /* 화면에서는 가로 넘침을 자르지만 인쇄에서는 잘린 채 찍힌다. */
+    overflow: visible !important;
+  }
+
+  /* ---- 화면 전용 장치 ----
+     목차 · 상단 바 · 맨 위로 · 스크롤 신호 · 커서는 data-print="hide" 로 표시한다.
+     고정(fixed) 요소는 모든 쪽에 되풀이해 찍히므로 표시가 없어도 뺀다. */
+  [data-print='hide'],
+  .backdrop-layers,
+  .fixed,
+  canvas,
+  button[aria-controls$='-detail'],
+  [id$='-detail'] > button {
+    display: none !important;
+  }
+
+  /* ---- 접힌 경험 ----
+     PDF 에서는 모든 경험을 펼친다. 접힌 채 인쇄해도 내용이 빠지지 않게 한다. */
+  [hidden='until-found'] {
+    display: block !important;
+    content-visibility: visible !important;
+  }
+
+  [id$='-detail'] {
+    height: auto !important;
+    opacity: 1 !important;
+  }
+
+  /* ---- 겹침 · 잘림 해제 ----
+     sticky 레일은 쪽마다 겹쳐 찍힌다. overflow 로 감싼 상자는 쪽을 넘길 때 잘린다. */
+  .sticky,
+  .lg\:sticky {
+    position: static !important;
+  }
+
+  main section,
+  [id$='-detail'],
+  #method {
+    overflow: visible !important;
+  }
+
+  /* 화면 한 장을 채우는 높이는 종이에서 빈 공간이 된다. */
+  #hero,
+  #method {
+    min-height: auto !important;
+  }
+
+  /* 리빌 전 상태로 인쇄되지 않게 최종 상태를 강제한다. */
+  .will-reveal,
+  [data-line],
+  [data-word] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  [style*='clip-path'] {
+    clip-path: none !important;
+  }
+
+  /* ---- 글꼴 ----
+     라벨의 모노 글꼴에는 한글이 없다. 시스템 CJK 글꼴이나 두부로 찍히지 않게
+     한글만 Pretendard 로 받는다. */
+  .font-mono {
+    font-family:
+      'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono',
+      'Liberation Mono', 'Pretendard Variable', Pretendard, monospace;
+  }
+
+  /* 비어 있는 자료 자리는 화면 한 칸 크기 대신 캡션 높이만 차지한다. */
+  figure > .border-dashed {
+    aspect-ratio: auto !important;
+    padding-block: 1.25rem;
+  }
+
+  /* 다섯 단계를 2열로 놓으면 마지막 칸이 빈 회색 칸으로 남는다. 폭을 다 쓰게 한다.
+     칸 높이가 다르면 짧은 칸 아래로 구분선 색이 비치므로 칸을 끝까지 채운다. */
+  #method ol > li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  #method ol > li > div {
+    height: 100%;
+  }
+
+  /* 챕터 사이 여백은 화면 기준(96px)이라 종이에서는 헐겁다. 쪽 끝 빈칸을 줄인다. */
+  main > section[id]:not(#hero) {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  /* 마지막 쪽에 저작권 한 줄만 넘어가지 않게 연락 구간의 여백을 줄인다. */
+  #contact {
+    padding-top: 4rem !important;
+    padding-bottom: 0 !important;
+  }
+
+  #contact .mt-24 {
+    margin-top: 3.5rem !important;
+  }
+
+  /* ---- 쪽 나눔 ---- */
+  /* 경험은 각자 새 쪽에서 시작한다. 긴 경험이 앞 경험 끝에 붙으면 경계가 흐려진다. */
+  #work article[id] {
+    break-before: page;
+  }
+
+  /* 제목만 쪽 끝에 남지 않게 한다.
+     폭을 다 쓰는 행(구조도 · 자료 · 핵심 결정)은 머리가 내용 위에 따로 서므로 붙여 둔다.
+     머리가 옆에 붙는 2열 행에 걸면 행 전체가 줄줄이 묶여 큰 빈칸이 생긴다. */
+  h2,
+  section > div > aside,
+  footer > div > aside,
+  .rule.grid:not([class*='grid-cols']) > :first-child {
+    break-after: avoid;
+  }
+
+  p,
+  li,
+  dd {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* 한 덩어리로 읽는 것은 쪽 사이에서 자르지 않는다. 한 쪽보다 큰 것은 브라우저가 알아서 자른다. */
+  figure,
+  img,
+  svg,
+  blockquote,
+  #about li,
+  #work ol > li,
+  #method,
+  #retro article,
+  #toolkit li,
+  #toolkit .rule > div,
+  #toolkit .mt-20:not(.overflow-hidden),
+  #contact,
+  [id$='-detail'] article {
+    break-inside: avoid;
+  }
+}
