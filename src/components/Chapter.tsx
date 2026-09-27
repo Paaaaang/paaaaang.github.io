@@ -18,7 +18,7 @@ export function Chapter({
   label,
   title,
   intro,
-  accent = '#E8542F',
+  accent = '#1F3A8A',
   rail,
   children,
   className,

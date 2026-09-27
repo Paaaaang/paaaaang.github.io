@@ -87,24 +87,34 @@ export const identity: { label: string; value: string; emphasis?: boolean }[] = 
 /* ------------------------------------------------------------------ */
 
 export const about = {
-  statement: '요청받은 말보다 그 아래에서 실제로 무엇이 막히는지를 먼저 봅니다.',
+  /**
+   * 한 경험을 요청과 결과로 뒤집어 보여 준다. 요청과 결과의 간극이 곧 기획자가
+   * 한 일이다. 참고한 원칙: 한 문장에 한 포인트, 형용사보다 숫자 하나.
+   */
+  statement: '요청은 홈페이지였습니다. 결과는 143명을 받아 60명을 뽑은 면접 운영 시스템이었습니다.',
   pillars: [
     {
       n: '01',
-      title: '문제를 다시 정의합니다',
-      body: '홈페이지를 만들어 달라는 요청을 면접 운영 시스템으로 바꿔 제안했습니다. 실제로 일이 막히는 곳은 면접 당일이었습니다.',
+      tag: '문제 재정의',
+      title: '홈페이지 요청을 면접 운영 시스템으로 바꿨습니다',
+      body: '메신저 없이 지원부터 선발까지 한 시스템 안에서 끝냈습니다.',
+      metric: { value: '143 → 60', unit: '명', label: '지원에서 선발까지' },
       proof: { label: '면접 운영 시스템', href: 'interview-ops' },
     },
     {
       n: '02',
-      title: '운영을 구조로 바꿉니다',
-      body: '담당자 한 명의 머릿속이나 연락 한 경로에 묶인 일을 꺼내 여럿이 쓰고 확인하게 만듭니다. 체험관 운영과 동아리 총무 일을 같은 방식으로 풀었습니다.',
+      tag: '운영 구조화',
+      title: '담당자 머릿속에 있던 운영을 매뉴얼로 꺼냈습니다',
+      body: '체험관 운영과 동아리 총무 일을 같은 방식으로 풀었습니다. 동아리 행정 시간은 절반으로 줄었습니다.',
+      metric: { value: '75 → 55', unit: '분', label: '그룹당 체험 시간' },
       proof: { label: '헬스케어 체험관', href: 'healthcare-ops' },
     },
     {
       n: '03',
-      title: '기술을 아는 기획을 합니다',
-      body: '컴퓨터공학을 전공했습니다. 기술의 한계를 문제로 정의하고 기획안은 직접 만들어 검증합니다.',
+      tag: '기술 이해',
+      title: 'AI 기능을 사용자가 끝까지 쓰는 흐름으로 묶었습니다',
+      body: '컴퓨터공학 전공을 살려 기다리는 시간까지 요구사항으로 다뤘습니다.',
+      metric: { value: '5 → 2', unit: '초', label: '분석 결과를 기다리는 시간' },
       proof: { label: 'AI 서비스 기획', href: 'edge-ai' },
     },
   ],
@@ -173,7 +183,7 @@ export const caseStudies: CaseStudy[] = [
     id: 'interview-ops',
     index: '01',
     short: '면접 운영 시스템',
-    accent: '#E8542F',
+    accent: '#1F3A8A',
     kicker: '요청을 다시 정의하다',
     title: '메신저로 돌아가던 면접 운영을 하나의 시스템으로',
     period: '개인 기획·구현',
@@ -234,7 +244,7 @@ export const caseStudies: CaseStudy[] = [
     id: 'healthcare-ops',
     index: '02',
     short: '헬스케어 체험관',
-    accent: '#EC7A4C',
+    accent: '#2F4EA3',
     kicker: '사람 안에 있던 운영을 밖으로',
     title: '담당자마다 달랐던 체험을 75분에서 55분으로',
     period: '2024.07 – 2024.11 · 5개월',
@@ -295,7 +305,7 @@ export const caseStudies: CaseStudy[] = [
     id: 'edge-ai',
     index: '03',
     short: 'AI 서비스 기획',
-    accent: '#F3A072',
+    accent: '#4A66B5',
     kicker: '기술의 한계를 문제로 정의하다',
     title: 'AI 기능을 사용자가 끝까지 쓰는 흐름으로',
     period: '2025.07 – 2026.01 · 6개월',

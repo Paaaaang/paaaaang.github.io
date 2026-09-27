@@ -280,8 +280,8 @@ export function Cursor() {
     <div
       ref={dotRef}
       aria-hidden="true"
-      className="pointer-events-none fixed top-0 left-0 z-50 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full ring-1 ring-ink/40 lg:flex"
-      style={{ background: '#e9e5dd', willChange: 'transform' }}
+      className="pointer-events-none fixed top-0 left-0 z-50 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full ring-1 ring-paper/20 lg:flex"
+      style={{ background: 'var(--color-paper)', willChange: 'transform' }}
     >
       <span
         ref={labelRef}

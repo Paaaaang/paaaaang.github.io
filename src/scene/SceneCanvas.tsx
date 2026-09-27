@@ -40,10 +40,10 @@ function useScrollProgress(
       // 첫 화면을 0.9화면만큼 내리는 동안 정렬이 끝난다.
       target.current = Math.min(1, y / (vh * 0.9))
 
-      // 한 화면까지는 온전히 보이고, 1.8화면에 이르면 0.2 까지 내려간다.
-      // About 을 읽을 무렵에는 이미 물러나 있다.
+      // 한 화면까지는 온전히 보이고, 1.8화면에 이르면 0.08 까지 내려간다.
+      // 종이 바탕에서는 점이 글자 사이 얼룩처럼 보여서 거의 걷어낸다.
       const fade = Math.min(1, Math.max(0, (y - vh) / (vh * 0.8)))
-      visibility.current = 1 - fade * 0.8
+      visibility.current = 1 - fade * 0.92
 
       frame = 0
     }
@@ -98,7 +98,7 @@ export function SceneCanvas() {
 
   const progress = useRef(0)
   const visibility = useRef(1)
-  const accent = useRef(new THREE.Color('#e8542f'))
+  const accent = useRef(new THREE.Color('#1f3a8a'))
 
   useScrollProgress(progress, visibility)
   useAccentColor(accent)
@@ -111,7 +111,7 @@ export function SceneCanvas() {
       className="pointer-events-none fixed inset-0 -z-10"
       aria-hidden="true"
       // 배경이 본문 대비를 떨어뜨리지 않도록 전체적으로 눌러둔다.
-      style={{ opacity: 0.55 }}
+      style={{ opacity: 0.42 }}
     >
       <Canvas
         // 레티나에서 2를 넘기면 파티클 렌더 비용만 커지고 차이는 거의 없다.
@@ -133,7 +133,7 @@ export function SceneCanvas() {
         <Suspense fallback={null}>
           <ParticleField
             progressRef={reduced ? { current: 1 } : progress}
-            visibilityRef={reduced ? { current: 0.22 } : visibility}
+            visibilityRef={reduced ? { current: 0.12 } : visibility}
             accentRef={accent}
             tier={tier}
             animate={!reduced}

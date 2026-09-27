@@ -36,7 +36,7 @@ export function MediaFrame({ slot }: { slot: MediaSlot }) {
         <ClipReveal
           className={`overflow-hidden rounded-sm border border-ink-line ${
             // 흰 바탕 문서는 종이 한 장처럼 여백을 둬서 잉크 배경과 부딪히지 않게 한다.
-            slot.light ? 'bg-[#f4f2ee] p-4 sm:p-6' : 'bg-ink-raised'
+            slot.light ? 'bg-white p-4 sm:p-6' : 'bg-ink-raised'
           }`}
         >
           {/* 문서 캡처는 작게 보면 글자가 안 읽힌다. 원본을 새 탭으로 연다. */}

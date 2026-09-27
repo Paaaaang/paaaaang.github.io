@@ -5,32 +5,33 @@
 @property --accent {
   syntax: '<color>';
   inherits: true;
-  initial-value: #e8542f;
+  initial-value: #1f3a8a;
 }
 
 /* ------------------------------------------------------------------ */
 /* 디자인 토큰                                                          */
 /*                                                                    */
 /* 시각적 명제: "흩어진 것이 구조로 정렬되는 순간".                      */
-/* 잉크에 가까운 무채색 바탕 위에 따뜻한 종이색 본문, 챕터마다 한 가지 색.  */
-/* 아무 데나 붙여도 어울리는 파랑/보라 그라디언트는 쓰지 않는다.          */
+/* 기획 문서의 종이 바탕 위에 먹색 본문, 만년필 잉크 같은 프러시안 블루.   */
+/* 토큰 이름은 역할을 따른다: ink = 바탕, paper = 글자.                   */
+/* (처음 다크 테마로 시작해 붙은 이름이다. 값만 바꾸면 테마가 뒤집힌다.)   */
 /* ------------------------------------------------------------------ */
 @theme {
-  --color-ink: #0a0a0b;
-  --color-ink-raised: #121214;
-  --color-ink-line: #26262a;
-  --color-paper: #e9e5dd;
-  --color-paper-dim: #a8a49c;
-  --color-paper-faint: #85817a;
+  --color-ink: #f4f1ea; /* 종이 바탕 */
+  --color-ink-raised: #ece8df;
+  --color-ink-line: #d9d3c6;
+  --color-paper: #17181b; /* 먹색 본문 · 대비 15.7 */
+  --color-paper-dim: #4a4843; /* 대비 8.1 */
+  --color-paper-faint: #6b675f; /* 대비 5.0 */
 
   /* 챕터 색.
      색상(hue)은 하나만 쓴다. 버밀리언 한 가지를 명도만 세 단계로 나눈다.
      챕터마다 색상 자체를 바꾸면(주황 → 청록 → 황토) 각 챕터는 구분되지만
      사이트 전체에 "이 사람의 색"이 남지 않는다. 명도 단계는 구분도 되고
      하나의 색으로도 읽힌다. 세 단계 모두 잉크 배경 대비 AA(4.5:1)를 넘는다. */
-  --color-ch1: #e8542f; /* 대비 5.41 */
-  --color-ch2: #ec7a4c; /* 대비 7.03 */
-  --color-ch3: #f3a072; /* 대비 9.50 */
+  --color-ch1: #1f3a8a; /* 프러시안 블루 · 대비 9.2 */
+  --color-ch2: #2f4ea3; /* 대비 6.8 */
+  --color-ch3: #4a66b5; /* 대비 4.8 */
 
   --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -46,7 +47,7 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
     /* 현재 챕터 색. GSAP 이 스크롤에 따라 이 변수를 바꾼다. */
     --accent: var(--color-ch1);
     transition: --accent 600ms var(--ease-out-expo);
@@ -128,7 +129,7 @@
     background: radial-gradient(
       135% 95% at 50% 45%,
       transparent 42%,
-      rgba(0, 0, 0, 0.55) 100%
+      rgba(60, 48, 24, 0.07) 100%
     );
   }
 
@@ -136,7 +137,7 @@
   .backdrop-grain {
     position: absolute;
     inset: 0;
-    opacity: 0.04;
+    opacity: 0.05;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
     background-repeat: repeat;
   }
