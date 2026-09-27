@@ -8,7 +8,8 @@
     "build": "tsc -b --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint . --max-warnings 0",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -b --noEmit",
+    "architecture": "node scripts/export-architecture.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.7.0",

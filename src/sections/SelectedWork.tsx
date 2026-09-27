@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { caseStudies, type CaseStudy } from '../content/profile'
+import { caseStudies, timeline, type CaseStudy } from '../content/profile'
 import { Chapter, Row } from '../components/Chapter'
 import { CountUp, Reveal, useChapterAccent } from '../components/motion'
 import { MaskedLines } from '../components/scroll'
@@ -41,29 +41,11 @@ export function SelectedWork() {
       index="02"
       label="Selected Work"
       title={['대표 경험 세 가지']}
-      intro="요청을 다시 정의한 일, 운영을 구조로 바꾼 일, 기술의 한계를 문제로 잡은 일입니다. 셋 다 같은 순서로 정리했습니다."
+      intro="전체 이력을 연도별로 먼저 보여 드리고 그중 세 가지를 자세히 풀었습니다. 요청을 다시 정의한 일과 운영을 구조로 바꾼 일, 기술의 한계를 문제로 잡은 일입니다."
       accent={null}
       rail={<CaseRail active={active} />}
     >
-      {/* 좁은 화면에는 레일이 없어서 목차를 본문 머리에 둔다. */}
-      <Reveal stagger className="mt-12 lg:hidden">
-        {caseStudies.map((study) => (
-          <button
-            key={study.id}
-            type="button"
-            onClick={() => scrollToSection(study.id)}
-            className="rule flex w-full items-baseline gap-4 py-4 text-left"
-          >
-            <span className="font-mono text-xs tnum" style={{ color: study.accent }}>
-              {study.index}
-            </span>
-            <span className="text-[0.95rem] font-bold tracking-[-0.02em]">{study.short}</span>
-            <span aria-hidden="true" className="ml-auto text-paper-faint">
-              ↓
-            </span>
-          </button>
-        ))}
-      </Reveal>
+      <ProjectSummary />
 
       <div className="mt-20 space-y-36 lg:mt-28 lg:space-y-48">
         {caseStudies.map((study) => (
@@ -71,6 +53,85 @@ export function SelectedWork() {
         ))}
       </div>
     </Chapter>
+  )
+}
+
+/**
+ * Project Summary — 연도별 타임라인.
+ *
+ * 대표 경험을 읽기 전에 전체 이력을 한 화면에 깐다. 대표 경험 줄은
+ * 누르면 상세로 내려가고, 나머지는 한 줄 요약과 결과만 둔다.
+ * 좁은 화면에서는 이 목록이 레일 목차 역할도 한다.
+ */
+function ProjectSummary() {
+  const years = Array.from(new Set(timeline.map((t) => t.year)))
+
+  return (
+    <div className="mt-14">
+      <p className="font-mono text-[0.7rem] tracking-[0.22em] text-paper-faint uppercase">
+        Project Summary
+      </p>
+      <div className="mt-5">
+        {years.map((year) => (
+          <div key={year} className="rule grid gap-y-2 pt-5 pb-3 md:grid-cols-[5rem_minmax(0,1fr)] md:gap-x-6">
+            <p className="font-mono text-sm font-bold tnum" style={{ color: 'var(--accent)' }}>
+              {year}
+            </p>
+            <ol className="min-w-0">
+              {timeline
+                .filter((t) => t.year === year)
+                .map((item) => {
+                  const body = (
+                    <>
+                      <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        {item.period && (
+                          <span className="font-mono text-[0.72rem] text-paper-faint tnum">{item.period}</span>
+                        )}
+                        <span className="rounded-sm border border-ink-line px-1.5 py-0.5 text-[0.66rem] text-paper-faint">
+                          {item.kind}
+                        </span>
+                      </span>
+                      <span className="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <span className="text-[1.02rem] font-bold tracking-[-0.02em] transition-colors group-hover:text-(--accent)">
+                          {item.title}
+                        </span>
+                        <span className="text-xs text-paper-dim">
+                          {[item.team, item.role].filter(Boolean).join(' · ')}
+                        </span>
+                      </span>
+                      <span className="mt-1 block text-sm leading-relaxed text-paper-dim">{item.summary}</span>
+                      {item.result && (
+                        <span className="mt-1 block text-sm font-medium" style={{ color: 'var(--accent)' }}>
+                          {item.result}
+                        </span>
+                      )}
+                    </>
+                  )
+                  return (
+                    <li key={item.title} className="border-b border-ink-line/70 last:border-b-0">
+                      {item.href ? (
+                        <button
+                          type="button"
+                          onClick={() => scrollToSection(item.href!)}
+                          data-cursor-label="보기"
+                          className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 py-4 text-left"
+                        >
+                          <span className="min-w-0">{body}</span>
+                          <span className="pt-1 font-mono text-[0.66rem] tracking-[0.14em] whitespace-nowrap text-paper-faint uppercase group-hover:text-paper">
+                            Detail ↓
+                          </span>
+                        </button>
+                      ) : (
+                        <div className="py-4">{body}</div>
+                      )}
+                    </li>
+                  )
+                })}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 

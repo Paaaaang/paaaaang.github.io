@@ -1,0 +1,8 @@
+{
+  "$comment": "Cloudcraft 블루프린트 ID와 저장 위치. ID는 비밀이 아니다. API 키만 비밀이다.",
+  "blueprints": [
+    { "id": "", "out": "public/media/edge-ai/ttm-architecture.svg", "label": "TAP TO ME 시스템 아키텍처" },
+    { "id": "", "out": "public/media/edge-ai/prism-architecture.svg", "label": "PRISM 시스템 아키텍처" },
+    { "id": "", "out": "public/media/interview-ops/architecture.svg", "label": "면접 운영 시스템 아키텍처" }
+  ]
+}

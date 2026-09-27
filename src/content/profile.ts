@@ -62,7 +62,6 @@ export const teamProjects = [
   '감정교류 반려식물',
   'Step-up 창업경진대회',
   '군산 창업 런케이션',
-  '여행 루트 공유 플랫폼',
   'KT&G 상상프렌즈 로컬 프로젝트',
 ]
 
@@ -195,7 +194,7 @@ export const caseStudies: CaseStudy[] = [
     accent: '#1F3A8A',
     kicker: '요청을 다시 정의하다',
     title: '메신저로 돌아가던 면접 운영을 하나의 시스템으로',
-    period: '개인 기획·구현',
+    period: '2026.01 – 현재 · 유지보수 중',
     org: '동아리 신입 모집 · 면접 운영 시스템',
     role: '기획 · 구현',
     summary:
@@ -426,31 +425,117 @@ export const caseStudies: CaseStudy[] = [
 ]
 
 /* ------------------------------------------------------------------ */
-/* 작은 경험 — 대표에서 빠졌지만 기획 감각을 보여주는 것들               */
-/* 이력서·자기소개서에 적힌 사실만 쓴다.                                  */
+/* Project Summary — 연도별 타임라인                                     */
+/*                                                                    */
+/* 대표 경험 앞에서 전체를 한 번에 보여 준다. 기간·인원·역할은 이력서와   */
+/* 본인 확인을 거친 값만 쓴다. 모르는 값은 비워 두면 그리지 않는다.       */
 /* ------------------------------------------------------------------ */
 
-export const moreWork = [
+export type TimelineItem = {
+  year: string
+  period?: string
+  title: string
+  kind: '프로젝트' | '인턴' | '대외활동' | '동아리'
+  team?: string
+  role: string
+  summary: string
+  result?: string
+  /** 대표 경험이면 그 경험의 id. 누르면 상세로 내려간다. */
+  href?: string
+}
+
+export const timeline: TimelineItem[] = [
   {
-    title: '접수와 회계를 한 사람 손에서 꺼냈습니다',
-    org: '경제학술동아리 OPTION · 총무',
-    period: '2023.03 – 2025.05',
-    body: '문자와 전화로 받던 지원을 QR과 온라인 폼으로 옮겼습니다. 총무 혼자 보던 엑셀 장부는 운영진이 함께 보는 스프레드시트로 바꿨습니다. 사전 설문을 붙여 면접 준비도 미리 하게 했습니다.',
-    result: '행정 업무 시간 50% 단축 · 가입 문의 200% 증가 · 자금 관리 오차 0건',
+    year: '2026',
+    period: '2026.01 – 현재',
+    title: '동아리 모집 · 면접 운영 시스템',
+    kind: '프로젝트',
+    team: '개인',
+    role: '기획 · 구현 · 유지보수',
+    summary: '홈페이지 요청을 면접 운영 시스템으로 다시 정의했습니다.',
+    result: '143명 지원 · 60명 선발',
+    href: 'interview-ops',
   },
   {
-    title: '만들 수 있는지, 남는지부터 확인했습니다',
-    org: '감정교류 반려식물 · 전남대 만들마루',
+    year: '2025',
+    period: '2025.12 – 2026.01',
+    title: 'TAP TO ME',
+    kind: '프로젝트',
+    team: '4인',
+    role: 'PM · 총괄',
+    summary: '음식 사진 한 장으로 영양을 분석하고 코칭하는 앱을 기획했습니다.',
+    result: '분석 대기 5초 → 2초',
+    href: 'edge-ai',
+  },
+  {
+    year: '2025',
+    period: '2025.09 – 2025.10',
+    title: 'PRISM',
+    kind: '프로젝트',
+    team: '4인',
+    role: '팀원 · 기획 보조 · 백엔드',
+    summary: '공장 혼합 구역의 화재 징후를 현장 장비가 먼저 판단하는 관제 시스템입니다.',
+    result: '네트워크 단절 시 경보 유지 100%',
+    href: 'edge-ai',
+  },
+  {
+    year: '2024',
+    period: '2024.07 – 2024.11',
+    title: 'K-하이테크플랫폼 헬스케어 체험관',
+    kind: '인턴',
+    team: '2인 운영',
+    role: '운영 · 사업 보조 인턴',
+    summary: '신축 개관 당일부터 체험 운영을 표준화했습니다.',
+    result: '체험 시간 75분 → 55분',
+    href: 'healthcare-ops',
+  },
+  {
+    year: '2024',
+    period: '2024.02 – 2024.09',
+    title: 'KT&G 상상프렌즈 17기 로컬 프로젝트',
+    kind: '대외활동',
+    team: '15명',
+    role: '기획 · 예산 · PT',
+    summary: '8개월간 로컬 프로젝트를 예산 안에서 실행 가능한 계획으로 좁혔습니다.',
+    result: '목표 모집 인원 초과 달성',
+  },
+  {
+    year: '2024',
     period: '2024.01 – 2024.02',
-    body: '3D 모델링과 아두이노로 프로토타입을 먼저 만들어 구현 가능성을 봤습니다. 원예 교육 대상 아동으로 페르소나를 잡았습니다. 개당 제조 원가에 판관비까지 얹어 마진율 40%를 설계했습니다.',
+    title: '감정교류 반려식물',
+    kind: '프로젝트',
+    team: '5명',
+    role: '총괄 · 회로 설계',
+    summary: '프로토타입으로 구현 가능성을 확인하고 마진율 40%를 설계했습니다.',
     result: '메이커 스타트업 경진대회 우수상',
   },
   {
-    title: '처음으로 남의 검증을 통과한 기획',
-    org: '지산학연 스타트업 Step-up 창업경진대회',
+    year: '2024',
     period: '2024',
-    body: '타깃 고객을 세 세그먼트로 나누고 경쟁사 대비 차별점을 표로 정리했습니다. 1년 손익 시뮬레이션과 실행 일정까지 짰습니다.',
-    result: '장려상 · 실행 가능성과 논리 구조에서 높은 점수',
+    title: '지산학연 Step-up 창업경진대회',
+    kind: '프로젝트',
+    team: '2명',
+    role: '기획 · 사업계획서',
+    summary: '타깃을 세 세그먼트로 나누고 1년 손익 시뮬레이션까지 짰습니다.',
+    result: '장려상 (2024.11)',
+  },
+  {
+    year: '기타',
+    title: '군산 창업 런케이션',
+    kind: '프로젝트',
+    team: '2명',
+    role: '기획 · 실현 가능성 검토 · 사업계획서 · PPT · 발표',
+    summary: '짐 배달 · 보관 연계 서비스로 방향을 틀었지만 로컬성 증빙이 부족했습니다.',
+  },
+  {
+    year: '2023',
+    period: '2023.03 – 2025.05',
+    title: '경제학술동아리 OPTION',
+    kind: '동아리',
+    team: '총무',
+    role: '회비 · 행사 예산 · 행정 운영',
+    summary: '접수와 회계를 한 사람 손에서 꺼내 운영진이 함께 보게 했습니다.',
+    result: '행정 시간 50% 단축 · 자금 오차 0건',
   },
 ]
 
@@ -572,9 +657,8 @@ export const sections = [
   { id: 'hero', label: '처음' },
   { id: 'about', label: '01 About' },
   { id: 'work', label: '02 Selected Work' },
-  { id: 'more', label: '03 More' },
-  { id: 'method', label: '04 How I Work' },
-  { id: 'retro', label: '05 Retrospective' },
-  { id: 'toolkit', label: '06 Toolkit' },
-  { id: 'contact', label: '07 Contact' },
+  { id: 'method', label: '03 How I Work' },
+  { id: 'retro', label: '04 Retrospective' },
+  { id: 'toolkit', label: '05 Toolkit' },
+  { id: 'contact', label: '06 Contact' },
 ] as const

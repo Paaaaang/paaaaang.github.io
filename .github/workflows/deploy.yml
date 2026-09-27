@@ -28,6 +28,14 @@ jobs:
 
       - run: npm ci
 
+      # Cloudcraft 아키텍처를 SVG 로 내려받는다. 키는 저장소 Secret 으로만 넘기고
+      # 결과 파일만 빌드에 들어간다. 실패해도 배포는 계속한다.
+      - name: Export Cloudcraft architecture
+        run: node scripts/export-architecture.mjs
+        continue-on-error: true
+        env:
+          CLOUDCRAFT_API_KEY: ${{ secrets.CLOUDCRAFT_API_KEY }}
+
       - name: Typecheck and build
         run: npm run build
         env:

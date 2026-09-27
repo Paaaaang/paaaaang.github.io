@@ -3,7 +3,7 @@ import { Chapter } from '../components/Chapter'
 import { Reveal } from '../components/motion'
 
 /**
- * 05 Retrospective — 틀리고 나서 바꾼 것.
+ * 04 Retrospective — 틀리고 나서 바꾼 것.
  *
  * 바로 앞의 "일하는 순서"가 어디서 왔는지 보여 준다.
  * 방법론만 있으면 말뿐이고 실패만 있으면 반성문이다.
@@ -11,7 +11,7 @@ import { Reveal } from '../components/motion'
  */
 export function Retrospective() {
   return (
-    <Chapter id="retro" index="05" label="Retrospective" title={['틀리고 나서 바꾼 것들']}>
+    <Chapter id="retro" index="04" label="Retrospective" title={['틀리고 나서 바꾼 것들']}>
       <div className="mt-14 grid gap-14 lg:grid-cols-2 lg:gap-12">
         {limits.map((limit, i) => (
           <Reveal key={limit.title} delay={i * 0.08}>
