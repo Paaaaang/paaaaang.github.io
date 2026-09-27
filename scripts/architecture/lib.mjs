@@ -46,11 +46,12 @@ export const ROLE = {
 export const SIZE = {
   block: { width: 2.2, depth: 2.2, height: 0.6 },
   icon: 3,
-  // 사이트에서는 그림이 폭 900px 안팎으로 줄어든다. 그때도 읽히는 크기로 잡았다.
-  title: 28,
-  sub: 21,
-  edgeLabel: 19,
-  areaTitle: 26,
+  // 사이트에서는 그림이 폭 930px 안팎으로 줄어든다(원본의 약 1/3).
+  // 처음 값(28 · 21 · 19 · 26)은 실제 렌더에서 6px 안팎으로 찍혀 읽히지 않았다.
+  title: 50,
+  sub: 38,
+  edgeLabel: 34,
+  areaTitle: 44,
   edgeWidth: 2,
   /** 글자 크기 몇이 격자 한 칸인가. 이름표 길이를 어림해 영역 크기를 잡을 때만 쓴다. */
   textPerUnit: 50,
@@ -62,6 +63,14 @@ export const SIZE = {
 
 /** isotext·icon 방향. 'down' 은 Cloudcraft 기본값으로, x 축을 따라 읽힌다고 가정한다. */
 export const TEXT_DIRECTION = 'down'
+
+/**
+ * 투영. 처음에는 Cloudcraft 다운 등각(isometric)으로 그렸다. 실제 렌더를 사이트 폭(930px)에서
+ * 보니 이름표가 대각선으로 밀려 옆 블록에 붙어 읽혔고, 아이콘은 블록 아래 작은 점이 됐다.
+ * 평면(2d)에서는 이름표가 블록 바로 아래 가로로 놓이고 아이콘이 블록 위에 올라간다.
+ */
+export const PROJECTION = '2d'
+const ISO = PROJECTION === 'isometric'
 
 /* ------------------------------------------------------------------ */
 /* 결정적 UUID                                                          */
@@ -131,7 +140,7 @@ export function createBlueprint({ key, name, col = 8, lane = 7 }) {
       mapPos: [round(pos[0]), round(pos[1])],
       text: str,
       textSize: size,
-      isometric: true,
+      isometric: ISO,
       standing: false,
       direction: TEXT_DIRECTION,
       outline,
@@ -178,7 +187,7 @@ export function createBlueprint({ key, name, col = 8, lane = 7 }) {
         iconSet: 'fa',
         name: icon,
         iconSize: SIZE.icon,
-        isometric: true,
+        isometric: ISO,
         standing: false,
         direction: TEXT_DIRECTION,
         color: both(colors.icon),
@@ -197,7 +206,7 @@ export function createBlueprint({ key, name, col = 8, lane = 7 }) {
         subPos = [x, cy - 0.15 + gap + SIZE.sub / SIZE.textPerUnit]
       } else if (labelSide === 'back') {
         const x = cx - W / 2
-        const lift = SIZE.block.height * SIZE.heightShadow
+        const lift = ISO ? SIZE.block.height * SIZE.heightShadow : 0
         subPos = [x, cy - D / 2 - 0.35 - lift - sh + SIZE.sub / SIZE.textPerUnit]
         titlePos = [x, subPos[1] - SIZE.sub / SIZE.textPerUnit - gap]
       } else {
@@ -314,7 +323,7 @@ export function createBlueprint({ key, name, col = 8, lane = 7 }) {
       return {
         name,
         grid: 'infinite',
-        projection: 'isometric',
+        projection: PROJECTION,
         theme: { base: 'light' },
         nodes,
         edges: out,

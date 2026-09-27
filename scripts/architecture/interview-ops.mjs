@@ -12,7 +12,7 @@
 import { createBlueprint } from './lib.mjs'
 
 export default function interviewOps({ name }) {
-  const bp = createBlueprint({ key: 'interview-ops', name, col: 8, lane: 7 })
+  const bp = createBlueprint({ key: 'interview-ops', name, col: 7, lane: 6 })
 
   bp.element('browser', {
     at: [0, 2],

@@ -15,7 +15,7 @@
 import { createBlueprint } from './lib.mjs'
 
 export default function prism({ name }) {
-  const bp = createBlueprint({ key: 'prism', name, col: 9, lane: 7 })
+  const bp = createBlueprint({ key: 'prism', name, col: 8, lane: 6 })
 
   // 대시보드 묶음
   bp.element('github', { at: [0, 0], role: 'external', icon: 'github', title: 'GitHub' })

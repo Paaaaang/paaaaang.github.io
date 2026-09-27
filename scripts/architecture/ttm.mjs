@@ -13,7 +13,7 @@
 import { createBlueprint } from './lib.mjs'
 
 export default function ttm({ name }) {
-  const bp = createBlueprint({ key: 'ttm', name, col: 8, lane: 7 })
+  const bp = createBlueprint({ key: 'ttm', name, col: 7, lane: 6 })
 
   // 뒷줄: 흐름에 끼어드는 도구와 장비
   bp.element('github', { at: [1, 0], role: 'external', icon: 'github', title: 'GitHub', sub: '협업 도구' })
