@@ -144,6 +144,11 @@ export type MediaSlot = {
   alt?: string
   /** 흰 바탕 문서. 잉크 배경 위에서 종이 한 장처럼 보이게 여백을 준다. */
   light?: boolean
+  /**
+   * 원본 픽셀 크기. natural 비율 이미지는 이 값으로 자리를 먼저 잡는다.
+   * 없으면 이미지가 늦게 뜰 때 페이지 길이가 바뀌어 핀 구간 위치가 어긋난다.
+   */
+  size?: [number, number]
   /** 휴대폰 화면처럼 좁은 캡처. 칸 가운데에 실제 폭 가까이 놓는다. */
   narrow?: boolean
   /** 갤러리에서 차지하는 폭. 정하지 않으면 첫 자료만 full. */
@@ -262,6 +267,7 @@ export const caseStudies: CaseStudy[] = [
         span: 'full',
         caption: '면접 당일 진행 관리자 보드 — 면접실 3곳 · 면접관 9명 배정 (재현 목업)',
         src: '/media/interview-ops/board-mock.png',
+        size: [1912, 504],
         alt: '진행 관리자 보드 재현 목업. 대상자 41명, 대기실 6명, 1실부터 3실까지 면접 중이거나 휴식 중인 방, 완료 38명과 불참 표시가 열로 나뉘어 있다. 이름과 학번은 가려져 있다.',
       },
       {
@@ -270,6 +276,7 @@ export const caseStudies: CaseStudy[] = [
         span: 'half',
         caption: '면접관 화면 — 자기 방만 보이고 전원 제출해야 다음으로 (재현 목업)',
         src: '/media/interview-ops/room-mock.png',
+        size: [934, 756],
         alt: '면접관 화면 재현 목업. 지원자 카드와 10문항 1–5점 척도, 이 방 면접관의 제출 여부, 휴식 걸기 버튼이 있다.',
       },
       {
@@ -278,6 +285,7 @@ export const caseStudies: CaseStudy[] = [
         span: 'half',
         caption: '지원자 일정 선택 — 로그인 없이, 고른 칸은 마감돼도 계속 보임 (재현 목업)',
         src: '/media/interview-ops/schedule-mock.png',
+        size: [580, 796],
         narrow: true,
         alt: '지원자 일정 선택 화면 재현 목업. 시간대별 남은 자리, 선택한 칸, 마감된 칸이 구분되어 있다.',
       },
@@ -287,6 +295,7 @@ export const caseStudies: CaseStudy[] = [
         span: 'full',
         caption: '전대주주 플랫폼 랜딩 — 비회원이 처음 닿는 화면',
         src: '/media/interview-ops/landing.jpg',
+        size: [1100, 704],
         alt: '전대주주 랜딩 페이지. 캔들 차트 배경 위에 "돈이 돈답게 일하는 동아리, 전대주주" 헤드라인과 동아리 소개 보기 버튼, 하단 시세 티커.',
       },
     ],
@@ -436,6 +445,7 @@ export const caseStudies: CaseStudy[] = [
         ratio: 'natural',
         caption: 'TAP TO ME — 유스케이스 다이어그램',
         src: '/media/edge-ai/ttm-usecase.png',
+        size: [772, 680],
         span: 'half',
         alt: 'TAP TO ME 유스케이스 다이어그램. 사용자가 로그인, 회원가입, 음식 사진 촬영, 갤러리 사진 선택, AI 음식 인식 및 분석, 칼로리 및 영양 분석, 분석 결과 수정, 식단 기록 저장, 월간 리포트 제공을 이용한다. 회원가입에는 신체 정보, 질병 및 알러지, 운동량, 수면 시간 입력이 딸려 있다.',
         light: true,
@@ -451,6 +461,7 @@ export const caseStudies: CaseStudy[] = [
         ratio: 'natural',
         caption: 'PRISM — 테스트 박스 화재 시험과 같은 순간의 관제 대시보드',
         src: '/media/edge-ai/prism-test-dashboard.jpg',
+        size: [1600, 532],
         span: 'full',
         alt: '왼쪽은 센서와 카메라를 단 투명 테스트 박스 안에서 불을 피운 시험 장면, 오른쪽은 같은 시각의 PRISM 대시보드. TEST BOX 구역이 위험으로 표시되고 불꽃 감지됨, 온도 27.94도가 떠 있다.',
       },
@@ -505,6 +516,15 @@ export const timeline: TimelineItem[] = [
   },
   {
     year: '2025',
+    period: '2025.11',
+    title: '군산 창업 런케이션',
+    kind: '프로젝트',
+    team: '2명',
+    role: '기획 · 실현 가능성 검토 · 사업계획서 · PPT · 발표',
+    summary: '짐 배달 · 보관 연계 서비스로 방향을 틀었지만 로컬성 증빙이 부족했습니다.',
+  },
+  {
+    year: '2025',
     period: '2025.09 – 2025.10',
     title: 'PRISM',
     kind: '프로젝트',
@@ -554,14 +574,6 @@ export const timeline: TimelineItem[] = [
     role: '기획 · 사업계획서',
     summary: '타깃을 세 세그먼트로 나누고 1년 손익 시뮬레이션까지 짰습니다.',
     result: '장려상 (2024.11)',
-  },
-  {
-    year: '기타',
-    title: '군산 창업 런케이션',
-    kind: '프로젝트',
-    team: '2명',
-    role: '기획 · 실현 가능성 검토 · 사업계획서 · PPT · 발표',
-    summary: '짐 배달 · 보관 연계 서비스로 방향을 틀었지만 로컬성 증빙이 부족했습니다.',
   },
   {
     year: '2023',
@@ -618,15 +630,8 @@ export const method = {
 
 export const limits = [
   {
-    title: '권한 검증을 기획 단계에서 정의하지 않았다',
-    context: '여행 루트 공유 플랫폼 · 자율학기제 전공 과목 기획',
-    what: '로그인만 확인하고 그 글을 쓴 사람이 맞는지는 확인하지 않았습니다. 남의 글도 고치고 지울 수 있는 상태였습니다. 코드를 잘못 짠 탓은 아니었습니다. 누가 무엇까지 할 수 있는지를 기획 단계에서 정해 두지 않았습니다.',
-    change:
-      '그다음 동아리 모집·면접 시스템을 만들 때는 화면보다 권한 설계를 먼저 못 박았습니다. 평가자끼리 서로 못 보게 하는 것과 역할별로 어디까지 볼 수 있는지를 기획 단계에서 정했습니다.',
-  },
-  {
     title: '실행 가능성은 설득했지만 로컬성이 부족했다',
-    context: '군산 창업 런케이션 · 짐 배달·보관 연계 서비스',
+    context: '군산 창업 런케이션 · 2025.11 · 짐 배달·보관 연계 서비스',
     what: '초기 기획안은 문제 정의가 모호하다는 피드백을 받고 통째로 버린 뒤 방향을 틀었습니다. 현장 인터뷰 반응은 좋았지만 수상에는 실패했습니다. 평가에서 가장 무겁게 본 로컬성을 대지 못했습니다. 지역 거점과 상권, 관광 동선과의 연결, 파트너십, 수요 데이터 같은 것들입니다. 고객 검증도 말로만 남았습니다.',
     change:
       '그 뒤로 심사 기준을 쪼개 체크리스트로 만들고 현장 인터뷰와 파트너 확보를 빼놓지 않았습니다. 발표 순서도 결론, 근거, 실행, 지표로 고정했습니다. 앞의 일하는 순서가 여기서 나왔습니다.',

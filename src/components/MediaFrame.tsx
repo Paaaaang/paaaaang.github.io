@@ -47,7 +47,15 @@ export function MediaFrame({ slot }: { slot: MediaSlot }) {
               loading="lazy"
               decoding="async"
               className={`w-full ${aspect ? 'object-cover' : 'h-auto'} ${slot.light ? 'mx-auto max-w-[640px]' : ''} ${slot.narrow ? 'mx-auto max-w-[290px] py-4' : ''}`}
-              style={aspect ? { aspectRatio: aspect } : undefined}
+              width={slot.size?.[0]}
+              height={slot.size?.[1]}
+              style={
+                aspect
+                  ? { aspectRatio: aspect }
+                  : slot.size
+                    ? { aspectRatio: `${slot.size[0]} / ${slot.size[1]}` }
+                    : undefined
+              }
             />
             <span className="sr-only">원본 크기로 보기 (새 탭)</span>
           </a>

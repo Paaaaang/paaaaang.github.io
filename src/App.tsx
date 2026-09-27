@@ -38,6 +38,24 @@ export default function App() {
   useEffect(() => {
     // 웹폰트가 늦게 들어오면 줄 수가 바뀌어 트리거 위치가 어긋난다.
     document.fonts?.ready.then(() => ScrollTrigger.refresh())
+
+    // 이미지 지연 로딩이나 자료 추가로 문서 높이가 바뀌면 핀 구간의 시작점이
+    // 옛 위치에 남아, 앞 섹션이 아직 화면에 있는데 핀이 걸려 겹쳐 보인다.
+    // 높이가 달라질 때마다 (몰아서 한 번) 트리거 위치를 다시 잰다.
+    let timer = 0
+    let lastHeight = document.documentElement.scrollHeight
+    const observer = new ResizeObserver(() => {
+      const h = document.documentElement.scrollHeight
+      if (Math.abs(h - lastHeight) < 2) return
+      lastHeight = h
+      window.clearTimeout(timer)
+      timer = window.setTimeout(() => ScrollTrigger.refresh(), 150)
+    })
+    observer.observe(document.body)
+    return () => {
+      observer.disconnect()
+      window.clearTimeout(timer)
+    }
   }, [])
 
   return (

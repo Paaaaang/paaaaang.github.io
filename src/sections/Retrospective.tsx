@@ -11,8 +11,8 @@ import { Reveal } from '../components/motion'
  */
 export function Retrospective() {
   return (
-    <Chapter id="retro" index="04" label="Retrospective" title={['틀리고 나서 바꾼 것들']}>
-      <div className="mt-14 grid gap-14 lg:grid-cols-2 lg:gap-12">
+    <Chapter id="retro" index="04" label="Retrospective" title={['틀리고 나서 바꾼 것']}>
+      <div className="mt-14 grid max-w-3xl gap-14">
         {limits.map((limit, i) => (
           <Reveal key={limit.title} delay={i * 0.08}>
             <article className="rule pt-8">
