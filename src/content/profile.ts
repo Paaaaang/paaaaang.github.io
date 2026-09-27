@@ -173,6 +173,13 @@ export type MediaSlot = {
   /** 갤러리에서 차지하는 폭. 정하지 않으면 첫 자료만 full.
    *  half 는 나온 순서대로 둘씩 짝을 짓고, 짝이 없는 마지막 half 는 full 로 선다. */
   span?: 'full' | 'half'
+  /**
+   * 한 줄 자료의 16:7 높이 제한을 풀고 원본 비율 그대로 보인다.
+   * 경험의 핵심 그림(아키텍처)처럼 줄이면 안 읽히는 자료에만 쓴다.
+   */
+  uncapped?: boolean
+  /** 틀 바탕색. 어두운 그림은 그림 배경과 같은 색을 깔아 틀 경계가 보이지 않게 한다. */
+  backdrop?: string
 }
 
 /** 경험 안에서 코드로 그리는 구조도. 실제 모양은 src/components/diagrams 에 있다. */

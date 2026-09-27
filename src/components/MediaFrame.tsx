@@ -46,15 +46,19 @@ export function MediaFrame({ slot, role = 'full' }: { slot: MediaSlot; role?: Me
   // 좁은 화면은 한 줄로 쌓이니 높이를 맞출 이웃이 없다. 원본 비율 그대로 둔다.
   // 폰 캡처처럼 좁은 자료만 세로 4:5 틀에 넣어 화면 하나를 다 먹지 않게 한다.
   const mobile = slot.narrow ? Math.max(natural, 4 / 5) : natural
-  // 넓은 화면: 짝이면 공통 틀, 한 줄이면 원본(단, 16:7 보다 높지 않게).
-  const frame = role === 'pair' ? PAIR_FRAME : Math.max(natural, FULL_MIN)
+  // 넓은 화면: 짝이면 공통 틀, 한 줄이면 원본(단, 16:7 보다 높지 않게. uncapped 는 원본 그대로).
+  const frame = role === 'pair' ? PAIR_FRAME : slot.uncapped ? natural : Math.max(natural, FULL_MIN)
   const frameRef = useRef<HTMLElement>(null)
 
   // 자료 프레임이 본문보다 아주 조금 느리게 흐른다.
   // 폭을 좁게 둔 이유는, 다이어그램 위에서 크게 움직이면 읽기 어려워지기 때문이다.
   useParallax(frameRef, { speed: 0.035 })
 
-  const vars = { '--m': String(mobile), '--f': String(frame) } as CSSProperties
+  const vars = {
+    '--m': String(mobile),
+    '--f': String(frame),
+    ...(slot.backdrop ? { '--bd': slot.backdrop } : {}),
+  } as CSSProperties
   const box = 'relative w-full aspect-(--m) sm:aspect-(--f)'
 
   return (
@@ -63,7 +67,7 @@ export function MediaFrame({ slot, role = 'full' }: { slot: MediaSlot; role?: Me
         <ClipReveal
           className={`${box} overflow-hidden rounded-sm border border-ink-line ${
             // 흰 바탕 문서는 종이 한 장처럼 흰 바탕을 깔아 잉크 배경과 부딪히지 않게 한다.
-            slot.light ? 'bg-white' : 'bg-ink-raised'
+            slot.light ? 'bg-white' : slot.backdrop ? 'bg-(--bd)' : 'bg-ink-raised'
           }`}
         >
           {/* 문서 캡처는 작게 보면 글자가 안 읽힌다. 원본을 새 탭으로 연다. */}

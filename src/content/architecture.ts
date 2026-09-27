@@ -64,6 +64,10 @@ function slotFor(entry: Entry): MediaSlot | undefined {
     // 핀 구간 위치가 흔들리지 않는다. 가로로 긴 그림이라 폭을 다 쓴다.
     ratio: 'natural',
     span: 'full',
+    // 3D 도식은 16:7 로 줄이면 글자가 안 읽힌다. 원본 비율로 폭을 다 쓰고,
+    // 틀 바탕을 도식 배경(#121212)과 맞춰 양옆 띠가 보이지 않게 한다.
+    uncapped: true,
+    backdrop: '#121212',
     src,
     caption: entry.caption,
     alt: entry.alt,
