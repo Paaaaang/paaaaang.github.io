@@ -17,7 +17,10 @@ const key = process.env.CLOUDCRAFT_API_KEY
 const config = JSON.parse(await readFile(new URL('./architecture.config.json', import.meta.url), 'utf8'))
 const targets = config.blueprints.filter((b) => b.id)
 
-if (!key) {
+// Claude Code 클라우드 환경의 'API credentials' 에 키를 넣으면 프록시가 헤더를 붙여 준다.
+// 그때는 CLOUDCRAFT_VIA_PROXY=1 로 실행하면 키 없이 요청한다.
+const viaProxy = process.env.CLOUDCRAFT_VIA_PROXY === '1'
+if (!key && !viaProxy) {
   console.log('[architecture] CLOUDCRAFT_API_KEY 없음 — 저장된 파일을 그대로 씁니다.')
   process.exit(0)
 }
@@ -31,7 +34,7 @@ for (const bp of targets) {
   // 종이 바탕 위에 얹을 것이라 배경은 투명, 격자는 끈다.
   const url = `${API}/blueprint/${encodeURIComponent(bp.id)}/svg?grid=false&transparent=true`
   try {
-    const res = await fetch(url, { headers: { Authorization: `Bearer ${key}` } })
+    const res = await fetch(url, { headers: key ? { Authorization: `Bearer ${key}` } : {} })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const svg = await res.text()
     await mkdir(dirname(bp.out), { recursive: true })
