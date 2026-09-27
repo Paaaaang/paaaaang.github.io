@@ -58,6 +58,27 @@ docs/                    개선 계획서와 아트디렉션 기록
 레포 이름이 `Paaaaang.github.io` 이면 `https://paaaaang.github.io/` 루트로 배포됩니다.
 다른 이름이라면 `.github/workflows/deploy.yml` 의 `VITE_BASE` 를 `/레포이름/` 으로 바꿔야 합니다.
 
+## PDF 내보내기
+
+헤더의 PDF 버튼이 받는 `pioh-portfolio.pdf` 는 따로 만든 문서가 아니라 이 사이트를 그대로 인쇄한 것입니다.
+내용은 늘 `profile.ts` 와 같고, 사이트에 없는 휴대폰 번호와 주소는 PDF에도 없습니다.
+
+```bash
+npm run build
+npm run pdf                              # public/pioh-portfolio.pdf 갱신
+npm run pdf -- --out dist/pioh-portfolio.pdf
+```
+
+`scripts/export-pdf.mjs` 가 빌드 결과를 Vite preview 로 띄우고 Chrome을 모션 축소 설정으로 엽니다.
+3D·핀·리빌이 꺼진 정적 문서 상태에서 경험을 모두 펼치고, 이미지와 Pretendard를 다 받은 뒤 A4로 찍습니다.
+인쇄 규칙은 `src/styles/index.css` 맨 아래 `@media print` 에 있습니다.
+화면에만 필요한 요소에는 `data-print="hide"` 를 달면 PDF에서 빠집니다.
+
+- Pretendard가 안 뜨면 PDF를 만들지 않고 실패합니다. 대체 글꼴로 찍힌 PDF는 쓰지 않습니다
+- 배포할 때마다 Actions가 `dist/` 에 새로 찍습니다. 실패하면 커밋된 `public/` 사본이 대신 올라갑니다
+- 내용을 바꿨다면 `npm run pdf` 로 `public/` 사본도 갱신해 커밋해 두는 게 안전합니다
+- Chrome 경로는 `CHROME_PATH`, jsDelivr를 못 쓰는 환경에서는 `PRETENDARD_DIR`(pretendard 패키지의 `dist/web/variable/`)로 지정합니다
+
 ## 스크롤 인터랙션
 
 | 구간 | 동작 |
