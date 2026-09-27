@@ -57,30 +57,31 @@ export function Hero() {
       className="relative flex min-h-[100svh] items-center px-6 pt-20 pb-14 sm:px-10 sm:pt-24 lg:px-16"
     >
       {/*
-        좁은 화면에서는 사진과 이름이 한 줄에 나란히 서고, 나머지가 그 아래
+        글이 왼쪽, 사진이 오른쪽이다. 읽는 순서대로 문장이 먼저 오고
+        얼굴이 그 문장을 받친다.
+        좁은 화면에서는 머리말과 사진이 한 줄에 나란히 서고, 나머지가 그 아래
         두 열을 가로지른다. 사진을 위에 통째로 쌓으면 390px 기기에서
-        연락 버튼이 화면 밖으로 밀린다. 첫 화면에서 연락 수단이 보이지 않으면
-        정체성을 앞세운 의미가 없다.
+        연락 버튼이 화면 밖으로 밀린다.
       */}
       <div
         data-hero-body
-        className="mx-auto grid w-full max-w-6xl grid-cols-[6.5rem_minmax(0,1fr)] items-start gap-x-5 gap-y-6 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-x-6 lg:grid-cols-[16.5rem_minmax(0,1fr)] lg:items-center lg:gap-x-10 lg:gap-y-6"
+        className="mx-auto grid w-full max-w-6xl grid-cols-[minmax(0,1fr)_6.5rem] items-start gap-x-5 gap-y-6 sm:grid-cols-[minmax(0,1fr)_9rem] sm:gap-x-6 lg:grid-cols-[minmax(0,42rem)_16.5rem] lg:items-center lg:justify-center lg:gap-x-14 lg:gap-y-6"
       >
         {/* ---- 사진 ---- */}
         <div
           data-hero-photo
-          className="col-start-1 row-start-1 lg:row-span-2 lg:self-center"
+          className="col-start-2 row-start-1 lg:row-span-2 lg:self-center"
         >
           <PhotoFrame />
         </div>
 
         {/* ---- 머리말 + 관형구 ---- */}
-        <div className="col-start-2 row-start-1 min-w-0 self-center lg:self-end">
+        <div className="col-start-1 row-start-1 min-w-0 self-center lg:self-end">
           <p
             data-hero-kicker
             className="font-mono text-[0.62rem] tracking-[0.22em] text-paper-faint uppercase sm:text-[0.68rem] sm:tracking-[0.26em]"
           >
-            Portfolio 2026
+            Service Planner
           </p>
 
           <p
@@ -92,7 +93,7 @@ export function Hero() {
         </div>
 
         {/* ---- 선언 · 기본 정보 · 행동 ---- */}
-        <div className="col-span-2 row-start-2 min-w-0 lg:col-span-1 lg:col-start-2 lg:self-start">
+        <div className="col-span-2 row-start-2 min-w-0 lg:col-span-1 lg:col-start-1 lg:self-start">
           {/*
             이력서 맨 윗줄과 같은 형식이다. 관형구가 위에서 받쳐 주고
             여기서 직함과 이름이 문장을 닫는다.
@@ -105,6 +106,13 @@ export function Hero() {
               {profile.name}입니다.
             </span>
           </h1>
+
+          <p
+            data-hero-line
+            className="mt-4 font-mono text-[0.72rem] tracking-[0.22em] text-paper-faint uppercase"
+          >
+            {profile.nameEn}
+          </p>
 
           <p className="measure mt-6 text-[0.94rem] leading-[1.75] text-paper-dim sm:text-base">
             {profile.subthesis}

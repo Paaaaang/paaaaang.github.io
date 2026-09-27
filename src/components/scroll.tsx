@@ -242,16 +242,19 @@ export function Cursor() {
       yTo(e.clientY)
     }
 
+    // 크기는 scale 이 아니라 width/height 로 키운다. scale 로 키우면 안의 글자까지
+    // 비트맵처럼 늘어나서 저해상도 화면에서 흐릿하게 뭉개진다.
     const onOver = (e: PointerEvent) => {
       const target = (e.target as HTMLElement | null)?.closest<HTMLElement>(
         '[data-cursor-label]',
       )
       if (target) {
         label.textContent = target.dataset.cursorLabel ?? ''
-        gsap.to(dot, { scale: 3.4, duration: 0.4, ease: 'power3.out' })
+        gsap.to(dot, { width: 56, height: 56, duration: 0.4, ease: 'power3.out' })
+        gsap.to(label, { opacity: 1, duration: 0.25, delay: 0.08 })
       } else {
-        label.textContent = ''
-        gsap.to(dot, { scale: 1, duration: 0.4, ease: 'power3.out' })
+        gsap.to(dot, { width: 12, height: 12, duration: 0.4, ease: 'power3.out' })
+        gsap.to(label, { opacity: 0, duration: 0.15 })
       }
     }
 
@@ -277,12 +280,12 @@ export function Cursor() {
     <div
       ref={dotRef}
       aria-hidden="true"
-      className="pointer-events-none fixed top-0 left-0 z-50 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full mix-blend-difference lg:flex"
+      className="pointer-events-none fixed top-0 left-0 z-50 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full ring-1 ring-ink/40 lg:flex"
       style={{ background: '#e9e5dd', willChange: 'transform' }}
     >
       <span
         ref={labelRef}
-        className="absolute text-[0.2rem] font-bold tracking-[0.04em] whitespace-nowrap text-ink"
+        className="text-[0.72rem] leading-none font-bold tracking-[-0.01em] whitespace-nowrap text-ink opacity-0"
       />
     </div>
   )
