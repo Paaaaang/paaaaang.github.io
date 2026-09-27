@@ -169,7 +169,45 @@ function CaseArticle({ study }: { study: CaseStudy }) {
             <Meta term="기간" value={study.period} />
             <Meta term="소속" value={study.org} />
             <Meta term="역할" value={study.role} />
+            {study.team && <Meta term="팀 구성" value={study.team} />}
+            {study.note && <Meta term="특이사항" value={study.note} />}
+            {study.links && study.links.length > 0 && (
+              <div className="rule pt-3">
+                <dt className="font-mono text-[0.66rem] tracking-[0.2em] text-paper-faint uppercase">
+                  링크
+                </dt>
+                <dd className="mt-2 flex flex-col gap-1">
+                  {study.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-paper-dim underline decoration-ink-line underline-offset-4 transition-colors hover:text-(--accent)"
+                    >
+                      {link.label} ↗
+                    </a>
+                  ))}
+                </dd>
+              </div>
+            )}
           </dl>
+
+          {study.tools && study.tools.length > 0 && (
+            <div className="mt-6 flex flex-wrap items-center gap-2">
+              <span className="mr-1 font-mono text-[0.66rem] tracking-[0.2em] text-paper-faint uppercase">
+                도구 · 산출물
+              </span>
+              {study.tools.map((tool) => (
+                <span
+                  key={tool}
+                  className="rounded-full border border-ink-line px-3 py-1 text-xs text-paper-dim"
+                >
+                  {tool}
+                </span>
+              ))}
+            </div>
+          )}
         </Reveal>
       </header>
 
@@ -191,24 +229,44 @@ function CaseArticle({ study }: { study: CaseStudy }) {
           </Reveal>
         </Row>
 
-        <Row label="핵심 결정">
-          <ol className="space-y-10">
+        <Row label="핵심 결정" wide>
+          {/* 레퍼런스의 트러블슈팅 카드를 기획 결정으로 옮겼다.
+              무엇이 문제였나(?) → 어떻게 풀었나(!) → 무엇이 바뀌었나. */}
+          <ol className="grid gap-4 md:grid-cols-2">
             {study.actions.map((action, i) => (
               <Reveal as="li" key={action.heading} delay={i * 0.04}>
-                <div className="grid grid-cols-[2rem_minmax(0,1fr)] gap-x-3">
-                  <span
-                    className="pt-1 font-mono text-xs tnum"
-                    style={{ color: study.accent }}
-                  >
+                <article className="flex h-full flex-col rounded-sm border border-ink-line bg-ink-raised/50 p-5 sm:p-6">
+                  <p className="font-mono text-[0.66rem] tracking-[0.16em] tnum" style={{ color: study.accent }}>
                     {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <div className="min-w-0">
-                    <h4 className="text-lg leading-snug font-bold tracking-[-0.02em]">
-                      {action.heading}
-                    </h4>
-                    <p className="measure mt-3 leading-[1.85] text-paper-dim">{action.body}</p>
-                  </div>
-                </div>
+                  </p>
+                  <h4 className="mt-2 text-[1.05rem] leading-snug font-bold tracking-[-0.02em]">
+                    {action.heading}
+                  </h4>
+
+                  <dl className="mt-4 flex flex-1 flex-col gap-3 text-[0.9rem] leading-[1.75]">
+                    <div className="grid grid-cols-[1.25rem_minmax(0,1fr)] gap-x-2">
+                      <dt className="font-mono font-bold text-paper-faint">
+                        ?<span className="sr-only">문제</span>
+                      </dt>
+                      <dd className="text-paper-dim">{action.q}</dd>
+                    </div>
+                    <div className="grid grid-cols-[1.25rem_minmax(0,1fr)] gap-x-2">
+                      <dt className="font-mono font-bold" style={{ color: study.accent }}>
+                        !<span className="sr-only">해결</span>
+                      </dt>
+                      <dd className="text-paper">{action.body}</dd>
+                    </div>
+                  </dl>
+
+                  {action.result && (
+                    <p
+                      className="mt-4 border-t border-ink-line pt-3 text-sm font-medium"
+                      style={{ color: study.accent }}
+                    >
+                      → {action.result}
+                    </p>
+                  )}
+                </article>
               </Reveal>
             ))}
           </ol>
