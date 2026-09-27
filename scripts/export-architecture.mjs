@@ -4,8 +4,11 @@
  * 1. scripts/architecture/*.mjs 가 블루프린트 data 를 만든다 (그림의 원본).
  * 2. Cloudcraft 에서 같은 이름의 블루프린트를 찾아 고치고(PUT), 없으면 만든다(POST).
  *    그래서 CI 에서 몇 번을 돌려도 블루프린트가 늘어나지 않고, id 를 커밋할 필요도 없다.
- * 3. SVG(격자 끔, 배경 투명)를 src/assets/architecture/<key>.svg 로 받고,
- *    원본 크기를 <key>.size.json 에 적는다. 사이트는 이 크기로 자리를 먼저 잡는다.
+ * 3. SVG(격자 끔, dark 테마 바탕 그대로)를 받아 finish-svg.mjs 로 손본다.
+ *    영문 글꼴 대체(산세리프)를 붙이고, 로고(logos.mjs)를 블록 윗면에 그려 넣는다.
+ *    Cloudcraft API 로는 이미지를 올릴 수 없어서다. 받은 그대로는 out/<key>.raw.svg 에 남긴다.
+ * 4. 결과를 src/assets/architecture/<key>.svg 로 쓰고, 원본 크기를 <key>.size.json 에 적는다.
+ *    사이트는 이 크기로 자리를 먼저 잡는다.
  *
  * API 키는 환경 변수 CLOUDCRAFT_API_KEY 로만 읽는다. 사이트는 GitHub Pages 의
  * 정적 파일이라 브라우저 코드에 키를 넣으면 누구나 볼 수 있다. 그래서 키는
@@ -13,6 +16,9 @@
  *
  * 실행:
  *   CLOUDCRAFT_API_KEY=... npm run architecture
+ *   NODE_USE_ENV_PROXY=1 CLOUDCRAFT_VIA_PROXY=1 npm run architecture
+ *                                       프록시가 키를 붙여 주는 환경. Node 의 fetch 는
+ *                                       NODE_USE_ENV_PROXY=1 이 있어야 HTTPS_PROXY 를 쓴다.
  *   npm run architecture -- --dry-run   키 없이 검사만. 보낼 JSON 과 근사 미리보기를
  *                                       scripts/architecture/out/ 에 쓴다.
  *
@@ -26,6 +32,7 @@ import { fileURLToPath } from 'node:url'
 import { setTimeout as sleep } from 'node:timers/promises'
 import { validate, summarize } from './architecture/lib.mjs'
 import { renderPreview } from './architecture/preview.mjs'
+import { finishSvg } from './architecture/finish-svg.mjs'
 
 // 주소를 바꾸는 건 로컬 가짜 서버로 흐름을 시험할 때뿐이다.
 const API = process.env.CLOUDCRAFT_API_URL ?? 'https://api.cloudcraft.co'
@@ -95,6 +102,10 @@ const key = process.env.CLOUDCRAFT_API_KEY
 // Claude Code 클라우드 환경의 'API credentials' 에 키를 넣으면 프록시가 헤더를 붙여 준다.
 // 그때는 CLOUDCRAFT_VIA_PROXY=1 로 실행하면 키 없이 요청한다.
 const viaProxy = process.env.CLOUDCRAFT_VIA_PROXY === '1'
+// Node 의 fetch 는 HTTPS_PROXY 를 스스로 따르지 않는다. 프록시 뒤에서는 NODE_USE_ENV_PROXY=1 이 있어야 나간다.
+if (viaProxy && !process.env.NODE_USE_ENV_PROXY) {
+  log('힌트: 프록시 뒤라면 NODE_USE_ENV_PROXY=1 을 함께 주세요 — Node 의 fetch 는 그것 없이 HTTPS_PROXY 를 쓰지 않습니다.')
+}
 if (!key && !viaProxy) {
   log('CLOUDCRAFT_API_KEY 없음 — 저장된 파일을 그대로 씁니다.')
   await measureAll()
@@ -193,13 +204,21 @@ async function upsert(bp) {
 
 /** 이미지를 내려받아 src/assets/architecture/<key>.<format> 에 쓴다. */
 async function download(bp, id) {
-  // 종이 바탕 위에 얹을 것이라 배경은 투명, 격자는 끈다.
-  const params = new URLSearchParams({ grid: 'false', transparent: 'true' })
+  // 참고 그림처럼 검은 바탕(dark 테마)을 그대로 받는다. 격자는 끈다. 설정에서 transparent: true 로 바꿀 수 있다.
+  const params = new URLSearchParams({ grid: 'false', transparent: String(bp.transparent === true) })
   if (bp.scale) params.set('scale', String(bp.scale))
   const res = await call('GET', `/blueprint/${encodeURIComponent(id)}/${bp.format}?${params}`)
-  const buf = Buffer.from(await res.arrayBuffer())
-  if (bp.format === 'svg' && !buf.subarray(0, 2048).toString('utf8').includes('<svg')) {
-    throw new Error(`SVG 가 아닌 응답 (${res.headers.get('content-type')})`)
+  let buf = Buffer.from(await res.arrayBuffer())
+  if (bp.format === 'svg') {
+    if (!buf.subarray(0, 2048).toString('utf8').includes('<svg')) {
+      throw new Error(`SVG 가 아닌 응답 (${res.headers.get('content-type')})`)
+    }
+    // 받은 그대로도 남겨 둔다(커밋하지 않음). 로고 · 글꼴 손질만 다시 해 볼 때 쓴다.
+    await mkdir(OUT_DIR, { recursive: true })
+    await writeFile(join(OUT_DIR, `${bp.key}.raw.svg`), buf)
+    const done = finishSvg(buf.toString('utf8'), bp.data)
+    if (done.missing.length) warn(`${bp.key}: 윗면을 못 찾아 로고를 못 붙인 요소 — ${done.missing.join(', ')}`)
+    buf = Buffer.from(done.svg, 'utf8')
   }
   await mkdir(ASSET_DIR, { recursive: true })
   await writeFile(join(ASSET_DIR, `${bp.key}.${bp.format}`), buf)

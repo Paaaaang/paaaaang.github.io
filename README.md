@@ -56,11 +56,17 @@ docs/                    개선 계획서와 아트디렉션 기록
 그림의 원본은 각 저장소 README 의 시스템 아키텍처 그림이고(전대주주는 README 에 그림이 없어 저장소 코드 기준),
 `scripts/architecture/*.mjs` 에 블록 · 선 · 이름표로 옮겨 두었습니다.
 
+모양은 등각(isometric) · 어두운 바탕입니다. 요소마다 흰 블록 윗면에 로고, 앞면에 이름을 세우고 초록 테두리로 두릅니다.
+호스트(Vercel · Supabase …)는 주황, 앱 · 클라이언트는 노랑 테두리 영역, 그 안의 묶음은 하늘색이고, 선은 직각으로 꺾입니다.
+배치를 잡는 도구와 Cloudcraft 렌더 실측값(블록은 절반 크기로 그려짐, 글자 · 아이콘 위치 등)은 `scripts/architecture/lib.mjs` 에 있습니다.
+
 **키 넣기** — Cloudcraft 앱의 Manage API keys › Create API Key 에서 쓰기 권한이 있는 키를 만든 뒤
 
 - 배포에서 자동으로: 저장소 Settings › Secrets and variables › Actions 에 `CLOUDCRAFT_API_KEY` 를 추가합니다.
   `main` 에 푸시할 때마다 빌드 전에 블루프린트를 고치고 그림을 새로 받습니다.
 - 내 컴퓨터에서: `CLOUDCRAFT_API_KEY=... npm run architecture` 한 번이면 됩니다. 받은 파일을 커밋해 두면 API 가 실패해도 그 그림을 씁니다.
+- 프록시가 키를 붙여 주는 환경(Claude Code 클라우드의 API credentials 등): `NODE_USE_ENV_PROXY=1 CLOUDCRAFT_VIA_PROXY=1 npm run architecture`.
+  Node 의 `fetch` 는 `NODE_USE_ENV_PROXY=1` 이 없으면 `HTTPS_PROXY` 를 쓰지 않아 요청이 나가지 않습니다(빠뜨리면 스크립트가 한 줄로 알려 줍니다).
 
 **무엇이 생기나**
 
@@ -70,11 +76,15 @@ docs/                    개선 계획서와 아트디렉션 기록
 | 그림 `<key>.svg` 와 원본 크기 `<key>.size.json` | `src/assets/architecture/` |
 | 사이트 | 파일이 있는 경험의 자료 맨 앞(PRISM 은 PRISM 사진 앞)에 `아키텍처` 프레임으로 들어갑니다. 없으면 아무것도 그리지 않습니다 |
 
-- 키 없이 검사만: `npm run architecture -- --dry-run` — id 중복, 없는 블록을 가리키는 선, 색 형식을 확인하고
-  보낼 JSON 과 근사 미리보기 SVG 를 `scripts/architecture/out/` 에 씁니다(커밋하지 않음).
+- 키 없이 검사만: `npm run architecture -- --dry-run` — id 중복, 없는 블록 · connector 를 가리키는 선, 색 형식을 확인하고
+  보낼 JSON 과 근사 등각 미리보기 SVG 를 `scripts/architecture/out/` 에 씁니다(커밋하지 않음).
 - Cloudcraft 화면에서 손본 그림을 지키려면 `scripts/architecture.config.json` 에서 그 항목의 `update` 를 `false` 로 둡니다. 코드가 원본이라 그대로 두면 다음 배포에서 덮어씁니다.
 - API 가 data 를 거절하면 이유가 로그에 찍히고, 거절된 JSON 이 `scripts/architecture/out/<key>.rejected.json` 에 남습니다. 실패해도 배포는 계속됩니다.
-- SVG 에서 한글이 네모로 보이면 설정의 `format` 을 `png` 로 바꿔 다시 받습니다.
+- 로고: Cloudcraft API 로는 이미지를 올릴 수 없어서, 내려받은 SVG 의 블록 윗면에 스크립트가 직접 그려 넣습니다
+  (`scripts/architecture/finish-svg.mjs`). 로고 모양은 simple-icons(CC0)에서 쓰는 것만 `scripts/architecture/logos.mjs` 로 옮겼고,
+  로고가 없는 요소는 Font Awesome 4.7 아이콘을 씁니다. 같은 손질에서 영문이 명조로 바뀌지 않게 산세리프 대체 글꼴도 붙입니다.
+  Cloudcraft 가 준 그대로의 SVG 는 `scripts/architecture/out/<key>.raw.svg` 에 남습니다(커밋하지 않음).
+- SVG 에서 한글이 네모로 보이면 설정의 `format` 을 `png` 로 바꿔 다시 받습니다(로고 합성은 SVG 에만 됩니다).
 
 ## 배포
 
