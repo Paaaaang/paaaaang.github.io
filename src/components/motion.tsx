@@ -117,10 +117,13 @@ export function CountUp({
   to,
   suffix = '',
   className,
+  start = 'top 88%',
 }: {
   to: number
   suffix?: string
   className?: string
+  /** 세기 시작하는 위치. 첫 화면 맨 아래에 놓인 숫자는 'top bottom' 으로 바로 센다. */
+  start?: string
 }) {
   const ref = useRef<HTMLSpanElement>(null)
   const reduced = useReducedMotion()
@@ -144,14 +147,14 @@ export function CountUp({
       onUpdate: () => {
         el.textContent = `${Math.round(state.value)}${suffix}`
       },
-      scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+      scrollTrigger: { trigger: el, start, once: true },
     })
 
     return () => {
       tween.scrollTrigger?.kill()
       tween.kill()
     }
-  }, [to, suffix, reduced])
+  }, [to, suffix, reduced, start])
 
   // 애니메이션이 돌기 전에도 스크린 리더와 크롤러는 최종 값을 읽는다.
   return (

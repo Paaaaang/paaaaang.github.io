@@ -43,6 +43,19 @@
   --text-lede: clamp(1rem, 1.35vw, 1.2rem);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* 히어로 스크롤 표시. 선 안의 점이 위에서 아래로 빠져나간다.
+     모션 축소 설정에서는 아래 전역 규칙이 한 번만 돌고 멈추게 한다. */
+  --animate-scroll-cue: scroll-cue 1.8s var(--ease-out-expo) infinite;
+
+  @keyframes scroll-cue {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(200%);
+    }
+  }
 }
 
 @layer base {

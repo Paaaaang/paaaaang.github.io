@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { sections, profile, emailAddress } from '../content/profile'
-import { scrollToSection } from '../hooks/useSmoothScroll'
+import { getLenis, scrollToSection } from '../hooks/useSmoothScroll'
 
 /**
  * 목차.
@@ -8,6 +8,8 @@ import { scrollToSection } from '../hooks/useSmoothScroll'
  * 데스크톱에서는 오른쪽에 붙어 현재 위치를 보여주고,
  * 좁은 화면에서는 상단 진행 막대만 남긴다.
  * 긴 문서에서 지금 어디쯤인지 모르는 게 가장 큰 이탈 이유다.
+ *
+ * 인쇄(PDF)에서는 모두 빠진다. 고정 요소가 쪽마다 반복되면 본문을 가린다.
  */
 export function Nav() {
   const [active, setActive] = useState<string>('hero')
@@ -69,6 +71,7 @@ export function Nav() {
 
       {/* 상단 진행 막대 */}
       <div
+        data-print="hide"
         className="fixed inset-x-0 top-0 z-40 h-px bg-ink-line"
         role="presentation"
       >
@@ -81,9 +84,10 @@ export function Nav() {
         />
       </div>
 
-      {/* 상단 바. 히어로를 지나면 나타나 이름·직무·연락을 계속 들고 다닌다.
-          18,000px 문서 어디에서 마음먹어도 한 번에 연락할 수 있어야 한다. */}
+      {/* 상단 바. 히어로를 지나면 나타나 이름·직무·연락·PDF를 계속 들고 다닌다.
+          18,000px 문서 어디에서 마음먹어도 한 번에 연락하거나 파일로 챙길 수 있어야 한다. */}
       <div
+        data-print="hide"
         className={`fixed top-0 right-0 left-0 z-30 flex items-center justify-between gap-4 border-b px-6 py-3.5 transition-all duration-500 sm:px-10 lg:px-16 ${
           past
             ? 'translate-y-0 border-ink-line bg-ink/92 opacity-100 backdrop-blur-xl'
@@ -101,8 +105,21 @@ export function Nav() {
           <span className="hidden font-mono text-[0.66rem] tracking-[0.14em] text-paper-faint uppercase sm:inline">
             {sections.find((s) => s.id === active)?.label ?? ''}
           </span>
+          {/* 담당자가 사내에 돌려 볼 수 있게 파일로도 준다. 파일이 없으면 만들지 않는다. */}
+          {profile.pdf.href && (
+            <a
+              href={profile.pdf.href}
+              download={profile.pdf.filename}
+              tabIndex={past ? undefined : -1}
+              className="inline-flex items-center gap-1 rounded-sm border border-ink-line px-3 py-1.5 text-xs font-bold text-paper transition-colors hover:border-(--accent) hover:text-(--accent)"
+            >
+              PDF
+              <span aria-hidden="true">↓</span>
+            </a>
+          )}
           <a
             href={`mailto:${emailAddress()}`}
+            tabIndex={past ? undefined : -1}
             className="rounded-sm px-3 py-1.5 text-xs font-bold text-ink transition-opacity hover:opacity-85"
             style={{ background: 'var(--accent)' }}
           >
@@ -111,9 +128,12 @@ export function Nav() {
         </div>
       </div>
 
+      <BackToTop visible={past} />
+
       {/* 넓은 화면: 세로 목차 */}
       <nav
         aria-label="섹션 목차"
+        data-print="hide"
         className="fixed top-1/2 right-6 z-30 hidden -translate-y-1/2 lg:block"
       >
         {/* 이름은 각 챕터 레일과 상단 바에 이미 있다. 여기서는 위치만 점으로 보인다.
@@ -141,5 +161,41 @@ export function Nav() {
         </ul>
       </nav>
     </>
+  )
+}
+
+/**
+ * 처음으로 돌아가는 버튼.
+ *
+ * 오른쪽 목차의 첫 점도 처음으로 가지만, 점 하나로는 그런 기능이 있는지 알 수 없다.
+ * 좁은 화면에는 그 목차조차 없다. 글자로 적힌 버튼을 오른쪽 아래에 따로 둔다.
+ * 상단 바와 같은 때 나타난다. 첫 화면에서는 돌아갈 곳이 없다.
+ */
+function BackToTop({ visible }: { visible: boolean }) {
+  const toTop = () => {
+    const lenis = getLenis()
+    if (lenis) lenis.scrollTo(0, { duration: 1.2 })
+    else window.scrollTo({ top: 0, behavior: 'auto' })
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={toTop}
+      data-print="hide"
+      aria-label="처음으로 돌아가기"
+      tabIndex={visible ? undefined : -1}
+      className={`group fixed right-4 bottom-4 z-30 inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-full border border-ink-line bg-ink/92 px-3.5 text-xs font-bold text-paper shadow-[0_6px_24px_-12px_rgba(23,24,27,0.35)] backdrop-blur-xl transition-all duration-500 hover:border-(--accent) hover:text-(--accent) sm:right-6 sm:bottom-6 ${
+        visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'
+      }`}
+    >
+      <span
+        aria-hidden="true"
+        className="inline-block transition-transform duration-300 group-hover:-translate-y-0.5"
+      >
+        ↑
+      </span>
+      <span className="hidden sm:inline">처음으로</span>
+    </button>
   )
 }

@@ -9,7 +9,6 @@ const SceneCanvas = lazy(() =>
 import { Nav } from './components/Nav'
 import { Cursor } from './components/scroll'
 import { Hero } from './sections/Hero'
-import { StatBand } from './sections/StatBand'
 import { About } from './sections/About'
 import { SelectedWork } from './sections/SelectedWork'
 import { MethodScene } from './sections/MethodScene'
@@ -21,8 +20,8 @@ import { useReducedMotion } from './hooks/useMotionPreference'
 /**
  * 챕터 순서. 각 챕터가 한 가지 질문에 답한다.
  *
- * 00 Hero          누구인가
- *    StatBand      규모 (팀 프로젝트 · 수상 · 자격증)
+ * 00 Hero          누구인가 · 연락처
+ *    StatBand      규모 (팀 프로젝트 · 수상 · 자격증). 히어로 첫 화면 맨 아래에 붙는다
  * 01 About         어떻게 일하는가
  * 02 Selected Work 증거는 무엇인가
  *    (Project Summary 타임라인이 02 머리에 붙는다)
@@ -76,7 +75,6 @@ export default function App() {
 
       <main>
         <Hero />
-        <StatBand />
         <About />
         <SelectedWork />
         <MethodScene />

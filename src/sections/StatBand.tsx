@@ -1,12 +1,16 @@
 import { awards, certificates, teamProjects } from '../content/profile'
-import { CountUp, Reveal } from '../components/motion'
+import { CountUp } from '../components/motion'
 
 /**
- * 히어로 바로 아래 수치 띠.
+ * 히어로 맨 아래의 수치 띠.
  *
- * 히어로 안에는 숫자를 두지 않는다. 첫 화면은 얼굴과 문장이 맡고,
- * 스크롤을 한 번 내렸을 때 규모를 한 줄로 보여 준다.
+ * 문장 안에는 숫자를 두지 않는다. 얼굴과 문장이 먼저 읽히고, 눈이 첫 화면
+ * 아래로 내려오면 규모를 한 줄로 받는다. 스크롤하기 전에 보여야 해서
+ * 넓은 화면에서는 숫자와 설명을 옆으로 눕혀 높이를 줄였다.
  * 개수는 목록 길이에서 바로 센다. 손으로 적은 숫자는 목록과 어긋난다.
+ *
+ * 등장은 히어로 타임라인이 맡는다. 스크롤 리빌에 맡기면 낮은 화면에서
+ * 띠가 트리거 선 아래에 걸려 빈칸으로 남는다.
  */
 export function StatBand() {
   const stats = [
@@ -16,26 +20,30 @@ export function StatBand() {
   ]
 
   return (
-    <section aria-label="요약 수치" className="relative px-6 sm:px-10 lg:px-16">
-      <Reveal stagger className="mx-auto grid max-w-6xl grid-cols-3 border-y border-ink-line">
+    <section aria-label="요약 수치">
+      <div data-hero-stats className="grid grid-cols-3 border-y border-ink-line">
         {stats.map((stat, i) => (
           <div
             key={stat.label}
-            className={`px-3 py-7 sm:px-6 sm:py-9 ${i > 0 ? 'border-l border-ink-line' : ''}`}
+            className={`px-3 py-4 sm:flex sm:items-center sm:gap-5 sm:px-6 sm:py-6 [@media(max-height:820px)]:sm:py-4 ${
+              i > 0 ? 'border-l border-ink-line' : ''
+            }`}
           >
-            <p className="text-[clamp(2rem,5vw,3.5rem)] leading-none font-bold tracking-[-0.045em] tnum">
-              <CountUp to={stat.value} />
+            <p className="text-[clamp(1.9rem,4.2vw,3.1rem)] leading-none font-bold tracking-[-0.045em] tnum">
+              <CountUp to={stat.value} start="top bottom" />
             </p>
-            <p
-              className="mt-3 font-mono text-[0.6rem] tracking-[0.18em] uppercase sm:text-[0.68rem] sm:tracking-[0.22em]"
-              style={{ color: 'var(--accent)' }}
-            >
-              {stat.label}
-            </p>
-            <p className="mt-1.5 hidden text-xs text-paper-faint sm:block">{stat.note}</p>
+            <div className="mt-2.5 sm:mt-0">
+              <p
+                className="font-mono text-[0.6rem] tracking-[0.18em] uppercase sm:text-[0.66rem] sm:tracking-[0.22em]"
+                style={{ color: 'var(--accent)' }}
+              >
+                {stat.label}
+              </p>
+              <p className="mt-1 hidden text-xs text-paper-faint sm:block">{stat.note}</p>
+            </div>
           </div>
         ))}
-      </Reveal>
+      </div>
     </section>
   )
 }
