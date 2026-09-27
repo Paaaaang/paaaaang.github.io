@@ -170,7 +170,8 @@ export type MediaSlot = {
   size?: [number, number]
   /** 휴대폰 화면처럼 좁은 캡처. 칸 가운데에 실제 폭 가까이 놓는다. */
   narrow?: boolean
-  /** 갤러리에서 차지하는 폭. 정하지 않으면 첫 자료만 full. */
+  /** 갤러리에서 차지하는 폭. 정하지 않으면 첫 자료만 full.
+   *  half 는 나온 순서대로 둘씩 짝을 짓고, 짝이 없는 마지막 half 는 full 로 선다. */
   span?: 'full' | 'half'
 }
 
@@ -462,6 +463,16 @@ export const caseStudies: CaseStudy[] = [
     ],
     diagrams: ['ttm-flow', 'prism-arch'],
     media: [
+      // 세 경험 모두 자료는 한 줄을 다 쓰는 대표 자료로 시작하고 짝 자료가 뒤따른다.
+      {
+        kind: '현장 사진',
+        ratio: 'natural',
+        caption: 'PRISM — 테스트 박스 화재 시험과 같은 순간의 관제 대시보드',
+        src: '/media/edge-ai/prism-test-dashboard.jpg',
+        size: [1600, 532],
+        span: 'full',
+        alt: '왼쪽은 센서와 카메라를 단 투명 테스트 박스 안에서 불을 피운 시험 장면, 오른쪽은 같은 시각의 PRISM 대시보드. TEST BOX 구역이 위험으로 표시되고 불꽃 감지됨, 온도 27.94도가 떠 있다.',
+      },
       {
         kind: '기획 문서',
         ratio: 'natural',
@@ -477,15 +488,6 @@ export const caseStudies: CaseStudy[] = [
         ratio: 'square',
         caption: 'TAP TO ME — 건강 상태 설정부터 코칭까지 네 단계 화면',
         // src: '/media/edge-ai/ttm-screens.png',
-      },
-      {
-        kind: '현장 사진',
-        ratio: 'natural',
-        caption: 'PRISM — 테스트 박스 화재 시험과 같은 순간의 관제 대시보드',
-        src: '/media/edge-ai/prism-test-dashboard.jpg',
-        size: [1600, 532],
-        span: 'full',
-        alt: '왼쪽은 센서와 카메라를 단 투명 테스트 박스 안에서 불을 피운 시험 장면, 오른쪽은 같은 시각의 PRISM 대시보드. TEST BOX 구역이 위험으로 표시되고 불꽃 감지됨, 온도 27.94도가 떠 있다.',
       },
     ],
     learning:

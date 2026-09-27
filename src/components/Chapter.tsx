@@ -94,33 +94,37 @@ export function ChapterMark({ index, label }: { index: string; label: string }) 
 }
 
 /**
- * 챕터 안의 소제목 줄. 경험 케이스의 "문제 / 목표 / 핵심 결정" 같은
- * 행 머리에 쓴다. 넓은 화면에서는 왼쪽 좁은 단에 서고 내용이 오른쪽에 붙는다.
+ * 한글 라벨. "기간 / 문제 / 핵심 결정" 같은 칸 이름에 쓴다.
+ *
+ * 영문 라벨(PROJECT SUMMARY)은 모노 대문자에 자간을 넓혀도 읽히지만,
+ * 한글에 같은 자간(0.2em)을 주면 "팀   구 성"처럼 글자가 흩어져 낱말이 안 보인다.
+ * 모노 글꼴에는 한글 글리프도 없어 시스템 글꼴로 대체되어 본문과 글꼴이 달라진다.
+ * 그래서 한글 라벨은 본문 글꼴에 자간을 거의 두지 않고 굵기로 구분한다.
+ */
+export const KO_LABEL = 'text-[0.75rem] leading-snug font-semibold tracking-[0.02em] text-paper-faint'
+
+/**
+ * 경험 안의 소제목 줄. "문제 / 목표 / 핵심 결정 / 구조도 / 자료 / 회고" 행 머리에 쓴다.
+ *
+ * 모든 행이 같은 모양이다. 라벨이 위, 내용이 아래, 왼쪽 끝이 한 줄에 선다.
+ * 예전에는 글 행은 라벨을 왼쪽 단에, 폭이 필요한 행은 위에 두어서
+ * 내용의 왼쪽 끝이 행마다 360px ↔ 512px 로 오갔다. 훑어 읽는 눈이 매번 자리를 다시 찾았다.
  */
 export function Row({
   label,
   children,
   className,
-  wide = false,
 }: {
   label: string
   children: ReactNode
   className?: string
-  /** 구조도와 자료처럼 폭이 필요한 행. 머리를 위에 두고 내용이 폭을 다 쓴다. */
-  wide?: boolean
 }) {
   return (
-    <div
-      className={`rule grid gap-y-5 pt-7 ${
-        wide ? '' : 'md:grid-cols-[7.5rem_minmax(0,1fr)] md:gap-x-10'
-      } ${className ?? ''}`}
-    >
+    <div data-row className={`rule pt-6 ${className ?? ''}`}>
       <Reveal>
-        <h3 className="font-mono text-[0.7rem] tracking-[0.22em] text-paper-faint uppercase">
-          {label}
-        </h3>
+        <h3 className={KO_LABEL}>{label}</h3>
       </Reveal>
-      <div className="min-w-0">{children}</div>
+      <div className="mt-5 min-w-0">{children}</div>
     </div>
   )
 }

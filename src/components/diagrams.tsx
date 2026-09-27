@@ -75,7 +75,8 @@ function Frame({ label, caption, children }: { label: string; caption: string; c
 
   return (
     <figure ref={ref} className="m-0 rounded-sm border border-ink-line bg-ink-raised/50 p-5 sm:p-7">
-      <p className="font-mono text-[0.66rem] tracking-[0.2em] text-paper-faint uppercase">{label}</p>
+      {/* 그림 제목. 한글이 섞여 있어 모노 자간 대신 본문 글꼴로 쓴다(Chapter 의 KO_LABEL 참고). */}
+      <p className="text-[0.8rem] leading-snug font-semibold tracking-[-0.01em] text-paper-dim">{label}</p>
       <div className="mt-6">{children}</div>
       <figcaption className="mt-6 border-t border-ink-line pt-4 text-xs leading-relaxed text-paper-faint">
         {caption}
