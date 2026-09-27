@@ -45,7 +45,6 @@ docs/                    개선 계획서와 아트디렉션 기록
 |---|---|---|
 | 이력서 사진 | `public/media/profile/` | [README](public/media/profile/README.md) |
 | 프로젝트 자료 (아키텍처·화면설계·PPT·현장사진) | `public/media/<케이스 id>/` | [README](public/media/README.md) |
-| 이력서 PDF | `public/` 에 넣고 `profile.resumePdf` 경로 연결 | 넣으면 히어로에 다운로드 버튼이 생깁니다 |
 
 사진과 자료가 없어도 사이트는 정상 동작합니다.
 빈 자리에는 "여기에 무엇이 들어갈 자리인지"가 적힌 프레임이 그려지고,

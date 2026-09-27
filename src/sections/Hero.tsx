@@ -175,9 +175,11 @@ export function Hero() {
             </ul>
 
             {/* ---- 행동 ----
-                메일은 바로 위 연락처가 맡는다. 버튼은 다음에 읽을 곳 하나만 가리킨다. */}
+                메일은 바로 위 연락처가 맡는다. 버튼은 다음에 읽을 곳 하나만 가리킨다.
+                PDF 에서는 누를 곳이 없는 버튼이라 인쇄에서 뺀다. */}
             <div
               data-hero-cta
+              data-print="hide"
               className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3.5 text-sm sm:mt-7 [@media(max-height:820px)]:sm:mt-4"
             >
               <Magnetic>
