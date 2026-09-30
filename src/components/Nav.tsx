@@ -136,25 +136,44 @@ export function Nav() {
         data-print="hide"
         className="fixed top-1/2 right-6 z-30 hidden -translate-y-1/2 lg:block"
       >
-        {/* 이름은 각 챕터 레일과 상단 바에 이미 있다. 여기서는 위치만 점으로 보인다.
-            이름까지 띄우면 넓은 화면에서 본문 오른쪽 끝과 겹친다. */}
+        {/* 평소에는 위치만 점으로 보인다. 이름을 늘 띄우면 넓은 화면에서 본문 오른쪽 끝과 겹친다.
+            점에 마우스를 올리거나 키보드로 오면 그 점 하나의 이름표만 왼쪽에 나타난다.
+            어디로 가는 점인지 누르기 전에 알 수 있고, 가리는 넓이는 가장 작다. */}
         <ul className="space-y-3.5">
           {sections.map((section) => {
             const isActive = section.id === active
             return (
-              <li key={section.id} className="flex items-center justify-end">
+              <li key={section.id} className="group relative flex items-center justify-end">
                 <button
                   type="button"
                   onClick={() => scrollToSection(section.id)}
-                  aria-label={`${section.label} 섹션으로 이동`}
+                  aria-label={`${section.n ? `${section.n} ` : ''}${section.name} 섹션으로 이동`}
                   aria-current={isActive ? 'true' : undefined}
-                  title={section.label}
-                  className="block h-2 w-2 rounded-full transition-all duration-300 hover:scale-150"
-                  style={{
-                    background: isActive ? 'var(--accent)' : 'var(--color-ink-line)',
-                    transform: isActive ? 'scale(1.35)' : undefined,
-                  }}
-                />
+                  // 점은 8px 이라 조준이 어렵다. 보이는 크기는 그대로 두고 누르는 자리만 넓힌다.
+                  className="peer -m-1.5 block rounded-full p-1.5"
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`block h-2 w-2 rounded-full transition-all duration-300 group-hover:scale-150 ${
+                      isActive ? 'scale-[1.35]' : ''
+                    }`}
+                    style={{ background: isActive ? 'var(--accent)' : 'var(--color-ink-line)' }}
+                  />
+                </button>
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-1/2 right-full mr-3 -translate-y-1/2 translate-x-1 rounded-sm border border-ink-line bg-ink/95 px-2.5 py-1 text-xs whitespace-nowrap opacity-0 shadow-[0_6px_20px_-12px_rgba(23,24,27,0.4)] backdrop-blur transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 peer-focus-visible:translate-x-0 peer-focus-visible:opacity-100"
+                >
+                  {section.n && (
+                    <span
+                      className="mr-1.5 font-mono text-[0.66rem] tnum"
+                      style={{ color: isActive ? 'var(--accent)' : 'var(--color-paper-faint)' }}
+                    >
+                      {section.n}
+                    </span>
+                  )}
+                  <span className={isActive ? 'font-semibold text-paper' : 'text-paper-dim'}>{section.name}</span>
+                </span>
               </li>
             )
           })}
