@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { OPEN_CASE_EVENT, revealCase } from '../components/caseAccordion'
 import { useReducedMotion } from '../hooks/useMotionPreference'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { caseStudies, timeline, type CaseStudy } from '../content/profile'
 import { withArchitecture } from '../content/architecture'
 import { Chapter, KO_LABEL, Row } from '../components/Chapter'
@@ -13,55 +12,53 @@ import { Diagram } from '../components/diagrams'
 import { scrollToSection } from '../hooks/useSmoothScroll'
 
 /**
- * 02 Selected Work — 대표 경험 세 가지.
+ * 02 Work — 해 온 일.
  *
- * 세 경험 모두 같은 뼈대로 읽힌다. 칸 수가 경험마다 달라도 모양은 같다.
+ * 연도별 목록(Project Summary) 하나로 전체를 보여 주고, CASE 가 붙은 세 줄은
+ * 누르면 목록 맨 아래 한 칸에서 그 경험이 아코디언으로 열린다. 한 번에 하나만 연다.
+ * 세 경험을 늘 길게 쌓아 두면 목록을 다 읽기도 전에 페이지가 끝없이 길어지고,
+ * 목록과 상세가 같은 이야기를 두 번 한다.
  *
- *   늘 보임   번호 · 제목 · 요약 → 정보표 → 결과 → [자세히 보기]
- *   펼치면    문제 → 목표 → 핵심 결정 → 구조도 → 자료 → 회고
- *
+ * 열린 경험은 세 경험 모두 같은 뼈대로 읽힌다.
+ *   번호 · 제목 · 요약 → 정보표 → 결과 → 문제 → 목표 → 핵심 결정 → 구조도 → 자료 → 회고
  * 기획자가 실제로 쓰는 문서 순서라 읽는 사람이 다음에 무엇이 올지 안다.
- * 그래야 경험끼리 비교가 되고 3분 안에 하나를 끝까지 읽는다.
  *
  * 격자는 항목 수에 맞춰 열 수를 고른다. 3열 격자에 4개를 넣어 마지막 줄에
  * 하나만 남는 식의 빈칸을 만들지 않는다. 빈칸은 "뭔가 빠졌나" 하고 멈추게 한다.
  *
- * 왼쪽 레일에는 세 경험이 목차로 붙어 있고 지금 읽는 경험에 불이 들어온다.
+ * 닫힌 경험도 DOM 에는 남긴다(hidden="until-found"). 브라우저 찾기(Ctrl+F)로
+ * 찾아지고, PDF 에서는 인쇄 스타일이 셋 다 펼친다.
  */
 export function SelectedWork() {
-  const [active, setActive] = useState(0)
+  // 처음에는 01 을 열어 둔다. 목록 아래가 비어 있으면 "여기서 끝"으로 읽힌다.
+  const [openId, setOpenId] = useState<string | null>(caseStudies[0]?.id ?? null)
 
+  // 바깥(About · 레일 · 타임라인 · 찾기)에서 경험을 여는 신호.
   useEffect(() => {
-    const triggers = caseStudies.map((study, i) =>
-      ScrollTrigger.create({
-        trigger: `#${study.id}`,
-        start: 'top 55%',
-        end: 'bottom 55%',
-        onToggle: (self) => {
-          if (self.isActive) setActive((prev) => (prev === i ? prev : i))
-        },
-      }),
-    )
-    return () => triggers.forEach((t) => t.kill())
+    const onOpen = (e: Event) => setOpenId((e as CustomEvent<string>).detail)
+    window.addEventListener(OPEN_CASE_EVENT, onOpen)
+    return () => window.removeEventListener(OPEN_CASE_EVENT, onOpen)
   }, [])
+
+  /** 닫기. 목록 줄에서 닫으면 그 자리에 두고, 경험 끝에서 닫으면 목록으로 돌아간다. */
+  const close = (backToList: boolean) => {
+    setOpenId(null)
+    if (backToList) requestAnimationFrame(() => scrollToSection('work-summary'))
+  }
+  const toggle = (id: string) => (openId === id ? close(false) : revealCase(id))
 
   return (
     <Chapter
       id="work"
       index="02"
-      label="Selected Work"
-      title={['대표 경험 세 가지']}
-      intro="전체 이력을 연도별로 먼저 보여 드리고 그중 세 가지를 자세히 풀었습니다. 요청을 다시 정의한 일과 운영을 구조로 바꾼 일, 기술의 한계를 문제로 잡은 일입니다."
+      label="Work"
+      title={['해 온 일']}
+      intro="연도별로 해 온 일을 모았습니다. CASE가 붙은 세 가지는 누르면 목록 아래에서 자세히 펼쳐집니다. 요청을 다시 정의한 일과 운영을 구조로 바꾼 일, 기술의 한계를 문제로 잡은 일입니다."
       accent={null}
-      rail={<CaseRail active={active} />}
+      rail={<CaseRail openId={openId} />}
     >
-      <ProjectSummary />
-
-      <div className="mt-20 space-y-36 lg:mt-28 lg:space-y-48">
-        {caseStudies.map((study) => (
-          <CaseArticle key={study.id} study={study} />
-        ))}
-      </div>
+      <ProjectSummary openId={openId} onToggle={toggle} />
+      <CasePanel openId={openId} onClose={close} />
     </Chapter>
   )
 }
@@ -69,15 +66,15 @@ export function SelectedWork() {
 /**
  * Project Summary — 연도별 타임라인.
  *
- * 대표 경험을 읽기 전에 전체 이력을 한 화면에 깐다. 대표 경험 줄은
- * 누르면 상세로 내려가고, 나머지는 한 줄 요약과 결과만 둔다.
+ * 전체 이력을 한 화면에 깐다. CASE 가 붙은 줄은 누르면 목록 맨 아래에서
+ * 그 경험이 열리고, 열린 줄을 다시 누르면 닫힌다. 나머지는 한 줄 요약과 결과만 둔다.
  * 좁은 화면에서는 이 목록이 레일 목차 역할도 한다.
  */
-function ProjectSummary() {
+function ProjectSummary({ openId, onToggle }: { openId: string | null; onToggle: (id: string) => void }) {
   const years = Array.from(new Set(timeline.map((t) => t.year)))
 
   return (
-    <div className="mt-14">
+    <div id="work-summary" className="mt-14 scroll-mt-24">
       <p className="font-mono text-[0.7rem] tracking-[0.22em] text-paper-faint uppercase">
         Project Summary
       </p>
@@ -123,18 +120,27 @@ function ProjectSummary() {
                   // 대표 경험으로 이어지는 줄은 몇 번 경험인지 적는다. "Detail" 만 있으면
                   // TAP TO ME 와 PRISM 이 같은 03 으로 간다는 걸 누르기 전에는 모른다.
                   const target = item.href ? caseStudies.find((c) => c.id === item.href) : undefined
+                  const isOpen = !!item.href && openId === item.href
                   return (
                     <li key={item.title} className="border-b border-ink-line/70 last:border-b-0">
                       {item.href ? (
                         <button
                           type="button"
-                          onClick={() => revealCase(item.href!)}
-                          data-cursor-label="보기"
+                          onClick={() => onToggle(item.href!)}
+                          // "-detail" 로 끝나는 aria-controls 는 인쇄에서 숨기는 버튼이다. 목록 줄은 PDF 에도 남아야 한다.
+                          aria-controls="case-panel"
+                          aria-expanded={isOpen}
+                          data-cursor-label={isOpen ? '닫기' : '열기'}
                           className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 py-4 text-left"
                         >
                           <span className="min-w-0">{body}</span>
-                          <span className="pt-0.5 font-mono text-[0.66rem] tracking-[0.14em] whitespace-nowrap text-paper-faint uppercase group-hover:text-paper">
-                            Case {target?.index} ↓
+                          <span
+                            className={`pt-0.5 font-mono text-[0.66rem] tracking-[0.14em] whitespace-nowrap uppercase transition-colors ${
+                              isOpen ? '' : 'text-paper-faint group-hover:text-paper'
+                            }`}
+                            style={isOpen ? { color: target?.accent } : undefined}
+                          >
+                            Case {target?.index} {isOpen ? '▲' : '↓'}
                           </span>
                         </button>
                       ) : (
@@ -151,13 +157,13 @@ function ProjectSummary() {
   )
 }
 
-/** 레일 목차. 지금 읽는 경험의 번호에 챕터 색이 들어온다. */
-function CaseRail({ active }: { active: number }) {
+/** 레일 목차. 열려 있는 경험의 번호에 챕터 색이 들어온다. */
+function CaseRail({ openId }: { openId: string | null }) {
   return (
     <nav aria-label="대표 경험 목차" className="mt-10 hidden lg:block">
       <ol className="space-y-1">
-        {caseStudies.map((study, i) => {
-          const on = i === active
+        {caseStudies.map((study) => {
+          const on = study.id === openId
           return (
             <li key={study.id}>
               <button
@@ -210,49 +216,108 @@ function splitTitle(title: string): string[] {
   return [words.slice(0, cut).join(' '), words.slice(cut).join(' ')]
 }
 
+/**
+ * 목록 맨 아래의 경험 칸. 세 경험 중 열린 하나만 보인다.
+ *
+ * 머리에 세 경험 바로가기를 둔다. 넓은 화면에서는 왼쪽 레일이 같은 일을 하지만
+ * 좁은 화면에는 레일이 없어서, 다른 경험으로 가려면 목록까지 올라가야 한다.
+ */
+function CasePanel({ openId, onClose }: { openId: string | null; onClose: (backToList: boolean) => void }) {
+  const current = caseStudies.find((c) => c.id === openId)
+
+  return (
+    <div id="case-panel" className="mt-16 scroll-mt-24 lg:mt-20">
+      <div className="rule flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 pt-5">
+        <p className="font-mono text-[0.7rem] tracking-[0.22em] text-paper-faint uppercase">
+          Case Study{current ? ` · ${current.index} / ${String(caseStudies.length).padStart(2, '0')}` : ''}
+        </p>
+        <ul className="flex flex-wrap gap-x-5 gap-y-2" data-print="hide">
+          {caseStudies.map((study) => {
+            const on = study.id === openId
+            return (
+              <li key={study.id}>
+                <button
+                  type="button"
+                  onClick={() => (on ? onClose(false) : revealCase(study.id))}
+                  aria-controls="case-panel"
+                  aria-expanded={on}
+                  className={`text-xs transition-colors ${on ? 'font-semibold' : 'text-paper-faint hover:text-paper'}`}
+                  style={on ? { color: study.accent } : undefined}
+                >
+                  <span className="font-mono tnum">{study.index}</span> {study.short}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+
+      {!current && (
+        <p className="mt-8 text-sm text-paper-faint" data-print="hide">
+          위 목록에서 CASE가 붙은 줄을 누르면 여기에서 자세히 펼쳐집니다.
+        </p>
+      )}
+
+      {caseStudies.map((study, i) => (
+        <CaseArticle
+          key={study.id}
+          study={study}
+          open={study.id === openId}
+          next={caseStudies[(i + 1) % caseStudies.length] ?? study}
+          onClose={() => onClose(true)}
+        />
+      ))}
+    </div>
+  )
+}
+
 /** 경험 하나. 세 경험이 같은 뼈대와 같은 행 순서를 쓴다. */
-function CaseArticle({ study }: { study: CaseStudy }) {
+function CaseArticle({
+  study,
+  open,
+  next,
+  onClose,
+}: {
+  study: CaseStudy
+  open: boolean
+  next: CaseStudy
+  onClose: () => void
+}) {
   const ref = useRef<HTMLElement>(null)
-  const detailRef = useRef<HTMLDivElement>(null)
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const firstRun = useRef(true)
   const reduced = useReducedMotion()
-  // 대표 경험 하나는 끝까지 읽히게 열어 둔다. 나머지는 요약과 결과만.
-  const [open, setOpen] = useState(study.index === '01')
   useChapterAccent(ref, study.accent)
 
-  const toggle = (next: boolean) => setOpen(next)
-
-  // 바깥(About · 타임라인 · 레일)에서 이 경험으로 이동하면 먼저 펼친다.
+  // 닫힌 경험도 Ctrl+F 로 찾으면 브라우저가 beforematch 를 보낸다. 그때 연다.
+  // 브라우저가 찾은 곳으로 직접 스크롤하므로 여기서는 열기만 한다.
   useEffect(() => {
-    const onOpen = (e: Event) => {
-      if ((e as CustomEvent<string>).detail === study.id) setOpen(true)
-    }
-    window.addEventListener(OPEN_CASE_EVENT, onOpen)
-    return () => window.removeEventListener(OPEN_CASE_EVENT, onOpen)
-  }, [study.id])
-
-  // 접힌 내용도 Ctrl+F 로 찾으면 브라우저가 beforematch 를 보낸다. 그때 펼친다.
-  useEffect(() => {
-    const el = detailRef.current
+    const el = wrapRef.current
     if (!el) return
-    const onMatch = () => setOpen(true)
+    const onMatch = () => window.dispatchEvent(new CustomEvent<string>(OPEN_CASE_EVENT, { detail: study.id }))
     el.addEventListener('beforematch', onMatch)
     return () => el.removeEventListener('beforematch', onMatch)
-  }, [])
+  }, [study.id])
 
-  useEffect(() => {
-    const el = detailRef.current
+  // 화면을 그리기 전에 숨김을 바꾼다. 바깥에서 열고 바로 스크롤할 때(revealCase)
+  // 아직 숨은 채로 위치를 재면 엉뚱한 곳으로 간다.
+  useLayoutEffect(() => {
+    const el = wrapRef.current
     if (!el) return
+    const first = firstRun.current
+    firstRun.current = false
     if (!open) {
       // until-found 를 모르는 브라우저는 평범한 hidden 으로 동작한다.
       el.setAttribute('hidden', 'until-found')
       return
     }
     el.removeAttribute('hidden')
-    if (reduced) return
+    // 처음 열려 있는 01 은 그냥 보인다. 누를 때만 아래로 펼쳐지며 나타난다.
+    if (reduced || first) return
     const tween = gsap.fromTo(
       el,
       { height: 0, opacity: 0 },
-      { height: 'auto', opacity: 1, duration: 0.6, ease: 'power3.out', clearProps: 'height,opacity' },
+      { height: 'auto', opacity: 1, duration: 0.7, ease: 'power3.out', clearProps: 'height,opacity' },
     )
     return () => {
       tween.kill()
@@ -260,83 +325,49 @@ function CaseArticle({ study }: { study: CaseStudy }) {
   }, [open, reduced])
 
   // 자료 목록. 경험 밖에서 오는 자료(예: 아키텍처 이미지)는 여기에 붙이면
-  // 갤러리 줄 나누기(MediaGallery)와 버튼의 목차 줄이 같이 따라온다.
+  // 갤러리 줄 나누기(MediaGallery)가 같이 따라온다.
   const media = withArchitecture(study.id, study.media)
 
-  // 펼치면 무엇이 나오는지. 열려 있든 닫혀 있든 같은 줄을 보여 줘서
-  // 01(처음부터 열림)과 02 · 03(닫힘)의 버튼 모양이 달라 보이지 않게 한다.
-  const contents = [
-    '문제',
-    '목표',
-    `핵심 결정 ${study.actions.length}개`,
-    study.diagrams && study.diagrams.length > 0 ? '구조도' : null,
-    media.length > 0 ? '자료' : null,
-    '회고',
-  ]
-    .filter(Boolean)
-    .join(' · ')
-
   return (
-    <article ref={ref} id={study.id} aria-label={study.title} className="scroll-mt-24">
-      {/* ---- 머리 ---- */}
-      <header>
-        <Reveal>
-          <div className="flex items-baseline gap-5">
-            <span
-              className="text-[clamp(2.75rem,6vw,4.75rem)] leading-none font-bold tracking-[-0.05em] tnum"
-              style={{ color: study.accent }}
-            >
-              {study.index}
-            </span>
-            {/* 번호(76px)와 제목(48px) 사이의 부제. 11px 모노로 두면 둘 사이에서 사라진다. */}
-            <span className="text-sm font-semibold tracking-[-0.01em] text-paper-dim">{study.kicker}</span>
-          </div>
+    // id 끝의 "-detail" 은 인쇄 스타일이 알아보는 표시다. PDF 에서는 닫힌 경험도 펼쳐 찍는다.
+    <div ref={wrapRef} id={`${study.id}-detail`} className="overflow-hidden">
+      <article ref={ref} id={study.id} aria-label={study.title} className="scroll-mt-24 pt-10">
+        {/* ---- 머리 ---- */}
+        <header>
+          <Reveal>
+            <div className="flex items-baseline gap-5">
+              <span
+                className="text-[clamp(2.75rem,6vw,4.75rem)] leading-none font-bold tracking-[-0.05em] tnum"
+                style={{ color: study.accent }}
+              >
+                {study.index}
+              </span>
+              {/* 번호(76px)와 제목(48px) 사이의 부제. 11px 모노로 두면 둘 사이에서 사라진다. */}
+              <span className="text-sm font-semibold tracking-[-0.01em] text-paper-dim">{study.kicker}</span>
+            </div>
+          </Reveal>
+
+          <MaskedLines
+            lines={splitTitle(study.title)}
+            className="mt-8 max-w-[20ch] text-chapter"
+            as="h3"
+            delay={0.05}
+          />
+
+          <Reveal delay={0.12}>
+            <p className="measure mt-8 text-lede leading-[1.75] text-paper-dim">{study.summary}</p>
+          </Reveal>
+        </header>
+
+        {/* ---- 정보표 ---- */}
+        <Reveal delay={0.18}>
+          <Spec study={study} />
         </Reveal>
 
-        <MaskedLines
-          lines={splitTitle(study.title)}
-          className="mt-8 max-w-[20ch] text-chapter"
-          as="h3"
-          delay={0.05}
-        />
+        {/* ---- 결과 ---- */}
+        <Results study={study} />
 
-        <Reveal delay={0.12}>
-          <p className="measure mt-8 text-lede leading-[1.75] text-paper-dim">{study.summary}</p>
-        </Reveal>
-      </header>
-
-      {/* ---- 정보표 ---- */}
-      <Reveal delay={0.18}>
-        <Spec study={study} />
-      </Reveal>
-
-      {/* ---- 결과: 접혀 있어도 늘 보인다 ---- */}
-      <Results study={study} />
-
-      <button
-        type="button"
-        onClick={() => toggle(!open)}
-        aria-expanded={open}
-        aria-controls={`${study.id}-detail`}
-        className="group mt-10 flex w-full items-center justify-between gap-4 rounded-sm border border-ink-line px-5 py-4 text-left transition-colors hover:border-(--accent)"
-      >
-        <span>
-          <span className="block text-[0.95rem] font-bold tracking-[-0.02em]">
-            {open ? '접기' : '자세히 보기'}
-          </span>
-          <span className="mt-0.5 block text-xs text-paper-faint">{contents}</span>
-        </span>
-        <span
-          aria-hidden="true"
-          className="font-mono text-lg transition-transform duration-300"
-          style={{ color: study.accent, transform: open ? 'rotate(180deg)' : undefined }}
-        >
-          ↓
-        </span>
-      </button>
-
-      {/* ---- 상세: 접으면 숨기되 브라우저 찾기(Ctrl+F)로는 찾아지게 until-found ---- */}
-      <div ref={detailRef} id={`${study.id}-detail`} className="overflow-hidden">
+        {/* ---- 상세 ---- */}
         <div className="mt-14 space-y-14">
           <Row label="문제">
             <Reveal stagger className="space-y-3">
@@ -383,18 +414,32 @@ function CaseArticle({ study }: { study: CaseStudy }) {
           </Row>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            toggle(false)
-            revealCaseTop(study.id)
-          }}
-          className="mt-10 text-xs font-semibold text-paper-faint transition-colors hover:text-paper"
+        {/* ---- 끝: 닫고 목록으로, 또는 다음 경험으로 ---- */}
+        <div
+          data-print="hide"
+          className="rule mt-14 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-5 text-sm"
         >
-          접기 ↑
-        </button>
-      </div>
-    </article>
+          <button
+            type="button"
+            onClick={onClose}
+            className="font-semibold text-paper-faint transition-colors hover:text-paper"
+          >
+            닫고 목록으로 ↑
+          </button>
+          <button
+            type="button"
+            onClick={() => revealCase(next.id)}
+            className="group inline-flex items-baseline gap-2 font-semibold transition-colors hover:text-(--accent)"
+          >
+            <span className="font-mono text-xs text-paper-faint">다음 · {next.index}</span>
+            {next.short}
+            <span aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-0.5">
+              →
+            </span>
+          </button>
+        </div>
+      </article>
+    </div>
   )
 }
 
@@ -574,11 +619,6 @@ function Decisions({ study }: { study: CaseStudy }) {
       })}
     </ol>
   )
-}
-
-/** 아래쪽 접기 버튼을 누르면 그 경험 머리로 돌아간다. 접힌 뒤 엉뚱한 곳에 남지 않게. */
-function revealCaseTop(id: string) {
-  requestAnimationFrame(() => scrollToSection(id))
 }
 
 /** "143명"처럼 숫자 하나로 된 값만 세어 올린다. "5 → 2초" 같은 값은 그대로 둔다. */

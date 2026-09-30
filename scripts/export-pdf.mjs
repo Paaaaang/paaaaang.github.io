@@ -193,8 +193,15 @@ async function assertStaticDocument(page) {
     // Lenis 는 동작 중이면 <html> 에 lenis 클래스를 붙인다.
     lenis: document.documentElement.classList.contains('lenis'),
     // 리빌이 돌기 전 상태(투명)로 남은 글자. 장식용 격자처럼 글자가 없는 요소는 뺀다.
+    // 인쇄에서 빠지는 요소(data-print="hide")는 셈하지 않는다. 상단 바 · 처음으로 버튼은
+    // 첫 화면에서 원래 투명하다(히어로를 지나야 나타난다).
     hidden: [...document.body.querySelectorAll('*')]
-      .filter((el) => el.textContent?.trim() && Number(getComputedStyle(el).opacity) < 0.5)
+      .filter(
+        (el) =>
+          el.textContent?.trim() &&
+          !el.closest('[data-print="hide"]') &&
+          Number(getComputedStyle(el).opacity) < 0.5,
+      )
       .map((el) => el.textContent.trim().slice(0, 30)),
   }))
   if (!state.reduced) fail('prefers-reduced-motion: reduce 가 적용되지 않았습니다.')
@@ -205,19 +212,24 @@ async function assertStaticDocument(page) {
   }
 }
 
-/** 접힌 경험을 모두 펼친다. 펼치는 버튼 자체는 인쇄 스타일에서 숨긴다. */
+/**
+ * 닫힌 경험을 모두 펼친다.
+ *
+ * 화면에서는 경험을 한 번에 하나만 연다. 버튼을 차례로 누르면 앞에 연 것이 닫히므로
+ * 누르지 않고, 닫힌 경험에 걸린 hidden="until-found" 를 걷어 셋 다 드러낸다.
+ * (예전 방식의 "자세히 보기" 버튼이 남아 있으면 그것도 눌러 둔다.)
+ */
 async function expandCases(page) {
-  const selector = 'button[aria-expanded="false"][aria-controls$="-detail"]'
-  const count = await page.locator(selector).count()
-  for (let i = 0; i < count; i++) {
-    // 누를 때마다 목록이 줄어든다. 늘 첫 번째 것을 누른다.
-    await page.locator(selector).first().click()
-  }
+  const legacy = 'button[aria-expanded="false"][aria-controls$="-detail"]'
+  const count = await page.locator(legacy).count()
+  for (let i = 0; i < count; i++) await page.locator(legacy).first().click()
+
+  await page.evaluate(() => {
+    for (const el of document.querySelectorAll('[id$="-detail"][hidden]')) el.removeAttribute('hidden')
+  })
   await page.waitForFunction(
-    (sel) =>
-      !document.querySelector(sel) &&
-      [...document.querySelectorAll('[id$="-detail"]')].every((el) => !el.hasAttribute('hidden')),
-    selector,
+    () => [...document.querySelectorAll('[id$="-detail"]')].every((el) => !el.hasAttribute('hidden')),
+    undefined,
     { timeout: 10_000 },
   )
   await page.evaluate(() => window.scrollTo(0, 0))

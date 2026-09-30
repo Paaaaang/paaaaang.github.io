@@ -2,11 +2,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { scrollToSection } from '../hooks/useSmoothScroll'
 
 /**
- * 경험 아코디언을 바깥에서 여는 신호.
+ * 경험을 여는 신호.
  *
- * About 의 Experience 링크, 타임라인의 Detail, 레일 목차가 경험으로 이동할 때
- * 접혀 있으면 먼저 펼친 다음 이동한다. 접힌 채로 이동하면 요약에서 멈춰
- * 사용자가 무엇을 누른 건지 헷갈린다.
+ * 경험은 Project Summary 목록 아래 한 칸에서 한 번에 하나만 열린다.
+ * About 의 "경험 0N" 링크, 목록의 CASE 줄, 레일 목차, 경험 끝의 "다음" 버튼이
+ * 모두 이 신호로 그 경험을 연 다음 그 경험 머리로 이동한다.
  */
 export const OPEN_CASE_EVENT = 'case:open'
 

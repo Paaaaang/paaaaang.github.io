@@ -728,7 +728,7 @@ export const awards = [
 export const sections = [
   { id: 'hero', label: '처음' },
   { id: 'about', label: '01 About' },
-  { id: 'work', label: '02 Selected Work' },
+  { id: 'work', label: '02 Work' },
   { id: 'method', label: '03 How I Work' },
   { id: 'retro', label: '04 Retrospective' },
   { id: 'toolkit', label: '05 Toolkit' },
