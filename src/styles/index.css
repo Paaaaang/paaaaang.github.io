@@ -358,7 +358,7 @@
   #method,
   #toolkit li,
   #toolkit .rule > div,
-  #toolkit .mt-20:not(.overflow-hidden),
+  #toolkit .mt-20:not([data-awards]),
   #contact,
   [id$='-detail'] article {
     break-inside: avoid;
