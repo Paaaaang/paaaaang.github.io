@@ -24,7 +24,7 @@ export const actorLabel: Record<Actor, string> = {
 
 /** D1 — 면접 운영 흐름 (경험 01) */
 export const interviewFlow: { caption: string; nodes: FlowNode[]; actors: Record<Actor, string> } = {
-  caption: '지원부터 최종 선발까지 메신저 없이 한 시스템 안에서 이어지는 흐름',
+  caption: '지원부터 최종 선발까지 한 시스템 안에서 이어지는 흐름. 카톡으로 오가던 일정 조율과 합격자 취합이 여기로 들어왔다',
   actors: { user: '지원자', ops: '운영진', system: '자동 처리' },
   nodes: [
     { who: 'user', title: '웹으로 지원', note: 'SNS 공지와 손 지원서를 대체' },
@@ -34,7 +34,7 @@ export const interviewFlow: { caption: string; nodes: FlowNode[]; actors: Record
       note: '평가자 7인이 합·불만 입력하면 과반으로 자동 판정. 서로의 평가는 비공개',
       key: true,
     },
-    { who: 'user', title: '면접 일정 직접 선택', note: '메신저로 조율하지 않음' },
+    { who: 'user', title: '면접 일정 직접 선택', note: '일정 조율 7일에서 모집 기간 3일 안으로' },
     { who: 'ops', title: '대기실 호출과 면접 진행', note: '면접실 3곳, 면접관 9명' },
     {
       who: 'system',
@@ -42,7 +42,7 @@ export const interviewFlow: { caption: string; nodes: FlowNode[]; actors: Record
       note: '면접관별 평균과 표준편차로 방 배정에 따른 유불리를 걷어냄',
       key: true,
     },
-    { who: 'ops', title: '최종 선발', note: '한 시스템 안에서 끝남' },
+    { who: 'ops', title: '최종 선발', note: '합격자 취합 30분에서 1분 이내로' },
   ],
 }
 
