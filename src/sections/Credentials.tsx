@@ -135,7 +135,7 @@ function AwardsStrip() {
 /** 05 Toolkit — 역량 · 자격 · 수상. 스캔하듯 읽는 구간이라 표에 가깝게 짠다. */
 export function Toolkit() {
   return (
-    <Chapter id="toolkit" index="06" label="Toolkit" title={['다루는 것과 받은 것']}>
+    <Chapter id="toolkit" index="05" label="Toolkit" title={['다루는 것과 받은 것']}>
       <div className="mt-14 grid gap-12 md:grid-cols-3 md:gap-8">
         {skillGroups.map((group, i) => (
           <Reveal key={group.group} delay={i * 0.06}>
@@ -179,7 +179,7 @@ export function Toolkit() {
   )
 }
 
-/** 07 Contact — 마지막 화면. 연락 수단은 이메일과 GitHub 뿐이다. */
+/** 06 Contact — 마지막 화면. 연락 수단은 이메일과 GitHub 뿐이다. */
 export function Contact() {
   const email = emailAddress()
 
@@ -187,7 +187,7 @@ export function Contact() {
     <footer id="contact" aria-label="Contact" className="relative px-6 pt-28 pb-16 sm:px-10 lg:px-16 lg:pt-40">
       <div className="mx-auto grid max-w-6xl gap-y-10 lg:grid-cols-[10rem_minmax(0,1fr)] lg:gap-x-14">
         <aside>
-          <ChapterMark index="07" label="Contact" />
+          <ChapterMark index="06" label="Contact" />
         </aside>
 
         <div className="min-w-0">

@@ -14,8 +14,8 @@ gsap.registerPlugin(ScrollTrigger)
  * "일하는 순서" — 핀 고정 시퀀스.
  *
  * 이 사이트에서 화면을 붙잡아 두는 구간은 여기 하나뿐이다.
- * 다섯 단계가 순서를 가진 절차라서, 스크롤을 그 순서에 물리는 것이
- * 내용과 맞는다. 카드 다섯 장을 늘어놓으면 순서가 아니라 목록으로 읽힌다.
+ * 네 단계(About 과 같은 방향 · 의사결정 · 검증 · 운영)가 순서를 가진 절차라서, 스크롤을 그 순서에
+ * 물리는 것이 내용과 맞는다. 카드 네 장을 늘어놓으면 순서가 아니라 목록으로 읽힌다.
  *
  * 좁은 화면과 모션 축소 설정에서는 핀을 걸지 않고 평범하게 쌓는다.
  * 작은 화면에서 긴 핀 구간은 "스크롤이 멈췄다"는 오해를 만든다.
@@ -138,7 +138,7 @@ export function MethodScene() {
             className={
               pinned
                 ? 'flex w-full will-change-transform'
-                : 'grid gap-px bg-ink-line md:grid-cols-2 lg:grid-cols-5'
+                : 'grid gap-px bg-ink-line md:grid-cols-2 lg:grid-cols-4'
             }
           >
             {steps.map((step, i) => (
@@ -166,7 +166,8 @@ export function MethodScene() {
                     </p>
                   </div>
                 ) : (
-                  <Reveal delay={i * 0.05}>
+                  // 칸 높이를 맞춘다. 본문이 짧은 칸 아래로 격자 선 색이 드러나지 않게.
+                  <Reveal delay={i * 0.05} className="h-full">
                     <div className="flex h-full flex-col bg-ink px-6 py-9">
                       <span
                         className="font-mono text-xs tracking-[0.2em] tnum"
