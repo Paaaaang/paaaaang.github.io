@@ -12,7 +12,7 @@ import { Diagram } from '../components/diagrams'
 import { scrollToSection } from '../hooks/useSmoothScroll'
 
 /**
- * 02 Work — 해 온 일.
+ * 02 Work — 경험.
  *
  * 연도별 목록(Project Summary) 하나로 전체를 보여 주고, CASE 가 붙은 세 줄은
  * 누르면 목록 맨 아래 한 칸에서 그 경험이 아코디언으로 열린다. 한 번에 하나만 연다.
@@ -52,8 +52,7 @@ export function SelectedWork() {
       id="work"
       index="02"
       label="Work"
-      title={['해 온 일']}
-      intro="연도별로 해 온 일을 모았습니다. CASE가 붙은 세 가지는 누르면 목록 아래에서 자세히 펼쳐집니다. 요청을 다시 정의한 일과 운영을 구조로 바꾼 일, 기술의 한계를 문제로 잡은 일입니다."
+      title={['경험']}
       accent={null}
       rail={<CaseRail openId={openId} />}
     >

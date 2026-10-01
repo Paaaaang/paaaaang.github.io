@@ -740,7 +740,7 @@ export const awards = [
 export const sections = [
   { id: 'hero', label: '처음', n: '', name: '처음' },
   { id: 'about', label: '01 About', n: '01', name: '소개' },
-  { id: 'work', label: '02 Work', n: '02', name: '해 온 일' },
+  { id: 'work', label: '02 Work', n: '02', name: '경험' },
   { id: 'method', label: '03 How I Work', n: '03', name: '일하는 순서' },
   { id: 'retro', label: '04 Retrospective', n: '04', name: '틀리고 나서 바꾼 것' },
   { id: 'toolkit', label: '05 Toolkit', n: '05', name: '다루는 것과 받은 것' },
