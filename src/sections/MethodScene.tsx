@@ -6,6 +6,7 @@ import { Reveal } from '../components/motion'
 import { MaskedLines, MOTION } from '../components/scroll'
 import { ChapterMark } from '../components/Chapter'
 import { useReducedMotion } from '../hooks/useMotionPreference'
+import { Sentences } from '../components/Sentences'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -98,7 +99,7 @@ export function MethodScene() {
 
           <Reveal delay={0.1}>
             <p className="measure mt-6 text-[0.94rem] leading-[1.75] text-paper-dim lg:mt-0 lg:max-w-[36ch] lg:text-right">
-              {method.intro}
+              <Sentences text={method.intro} />
             </p>
           </Reveal>
         </div>
@@ -161,7 +162,7 @@ export function MethodScene() {
                       {step.label}
                     </h3>
                     <p className="measure mt-7 text-lede leading-[1.75] text-paper-dim">
-                      {step.body}
+                      <Sentences text={step.body} />
                     </p>
                   </div>
                 ) : (
@@ -176,7 +177,9 @@ export function MethodScene() {
                       <h3 className="mt-5 text-base font-bold tracking-[-0.02em]">
                         {step.label}
                       </h3>
-                      <p className="mt-3 text-sm leading-[1.8] text-paper-dim">{step.body}</p>
+                      <p className="mt-3 text-sm leading-[1.8] text-paper-dim">
+                        <Sentences text={step.body} />
+                      </p>
                     </div>
                   </Reveal>
                 )}

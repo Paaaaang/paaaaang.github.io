@@ -2,6 +2,7 @@ import { about, caseStudies } from '../content/profile'
 import { Chapter } from '../components/Chapter'
 import { Reveal } from '../components/motion'
 import { revealCase } from '../components/caseAccordion'
+import { Sentences } from '../components/Sentences'
 
 /**
  * 01 About — 서비스 기획자의 네 가지 일과 그 근거.
@@ -51,7 +52,7 @@ export function About() {
                     {item.title}
                   </p>
                   <p className="measure mt-2.5 text-[0.93rem] leading-[1.8] text-paper-dim">
-                    {item.body}
+                    <Sentences text={item.body} />
                   </p>
                 </div>
 

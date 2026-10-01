@@ -11,6 +11,7 @@ import { MaskedLines } from '../components/scroll'
 import { MediaGallery } from '../components/MediaFrame'
 import { Diagram } from '../components/diagrams'
 import { scrollToSection } from '../hooks/useSmoothScroll'
+import { Sentences } from '../components/Sentences'
 
 /**
  * 02 Experience — 경험, 03 Case — CASE.
@@ -116,7 +117,9 @@ function ProjectSummary({ openId, onToggle }: { openId: string | null; onToggle:
                       <span className="mt-1.5 block text-[1.02rem] font-bold tracking-[-0.02em] transition-colors group-hover:text-(--accent)">
                         {item.title}
                       </span>
-                      <span className="mt-1 block text-sm leading-relaxed text-paper-dim">{item.summary}</span>
+                      <span className="mt-1 block text-sm leading-relaxed text-paper-dim">
+                        <Sentences text={item.summary} />
+                      </span>
                       {item.result && (
                         <span className="mt-1 block text-sm font-medium" style={{ color: 'var(--accent)' }}>
                           {item.result}
@@ -389,7 +392,9 @@ function CaseBody({ study, next, onClose }: { study: CaseStudy; next: CaseStudy;
         />
 
         <Reveal delay={0.12}>
-          <p className="measure mt-8 text-lede leading-[1.75] text-paper-dim">{study.summary}</p>
+          <p className="measure mt-8 text-lede leading-[1.75] text-paper-dim">
+              <Sentences text={study.summary} />
+            </p>
         </Reveal>
       </header>
 
@@ -407,7 +412,7 @@ function CaseBody({ study, next, onClose }: { study: CaseStudy; next: CaseStudy;
           <Reveal stagger className="space-y-3">
             {study.problem.map((line) => (
               <p key={line} className="measure leading-[1.85] text-paper-dim">
-                {line}
+                <Sentences text={line} />
               </p>
             ))}
           </Reveal>
@@ -415,7 +420,9 @@ function CaseBody({ study, next, onClose }: { study: CaseStudy; next: CaseStudy;
 
         <Row label="목표">
           <Reveal>
-            <p className="measure text-lede leading-[1.7] font-medium text-paper">{study.goal}</p>
+            <p className="measure text-lede leading-[1.7] font-medium text-paper">
+                <Sentences text={study.goal} />
+              </p>
           </Reveal>
         </Row>
 
@@ -442,7 +449,9 @@ function CaseBody({ study, next, onClose }: { study: CaseStudy; next: CaseStudy;
         <Row label="회고">
           <Reveal>
             <blockquote className="border-l-2 pl-6" style={{ borderColor: study.accent }}>
-              <p className="measure text-lede leading-[1.7] text-paper">{study.learning}</p>
+              <p className="measure text-lede leading-[1.7] text-paper">
+                  <Sentences text={study.learning} />
+                </p>
             </blockquote>
           </Reveal>
         </Row>
@@ -628,13 +637,17 @@ function Decisions({ study }: { study: CaseStudy }) {
                   <dt className="font-mono font-bold text-paper-faint">
                     ?<span className="sr-only">문제</span>
                   </dt>
-                  <dd className="text-paper-dim">{action.q}</dd>
+                  <dd className="text-paper-dim">
+                    <Sentences text={action.q} />
+                  </dd>
                 </div>
                 <div className="grid grid-cols-[1.25rem_minmax(0,1fr)] gap-x-2">
                   <dt className="font-mono font-bold" style={{ color: study.accent }}>
                     !<span className="sr-only">해결</span>
                   </dt>
-                  <dd className="text-paper">{action.body}</dd>
+                  <dd className="text-paper">
+                    <Sentences text={action.body} />
+                  </dd>
                 </div>
               </dl>
 

@@ -1,6 +1,7 @@
 import { limits } from '../content/profile'
 import { Chapter } from '../components/Chapter'
 import { Reveal } from '../components/motion'
+import { Sentences } from '../components/Sentences'
 
 /**
  * 04 Retrospective — 틀리고 나서 바꾼 것.
@@ -20,7 +21,9 @@ export function Retrospective() {
                 {limit.context}
               </p>
               <h3 className="mt-5 text-xl leading-snug font-bold tracking-[-0.025em]">{limit.title}</h3>
-              <p className="mt-6 leading-[1.85] text-paper-dim">{limit.what}</p>
+              <p className="mt-6 leading-[1.85] text-paper-dim">
+                <Sentences text={limit.what} />
+              </p>
 
               <div className="mt-7 grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-3">
                 <span
@@ -35,7 +38,9 @@ export function Retrospective() {
                   >
                     그 뒤로
                   </p>
-                  <p className="mt-2 leading-[1.85] text-paper">{limit.change}</p>
+                  <p className="mt-2 leading-[1.85] text-paper">
+                    <Sentences text={limit.change} />
+                  </p>
                 </div>
               </div>
             </article>

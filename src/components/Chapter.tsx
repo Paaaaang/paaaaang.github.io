@@ -1,6 +1,7 @@
 import { useRef, type ReactNode } from 'react'
 import { Reveal, useChapterAccent } from './motion'
 import { MaskedLines } from './scroll'
+import { Sentences } from './Sentences'
 
 /**
  * 챕터 틀 — 인덱스 레일.
@@ -63,7 +64,9 @@ export function Chapter({
 
           {intro && (
             <Reveal delay={0.1}>
-              <p className="measure mt-7 text-lede leading-[1.75] text-paper-dim">{intro}</p>
+              <p className="measure mt-7 text-lede leading-[1.75] text-paper-dim">
+                <Sentences text={intro} />
+              </p>
             </Reveal>
           )}
 
