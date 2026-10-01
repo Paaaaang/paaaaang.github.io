@@ -179,7 +179,7 @@ export function Toolkit() {
   )
 }
 
-/** 06 Contact — 마지막 화면. 연락 수단은 이메일, GitHub, 블로그뿐이다. */
+/** 07 Contact — 마지막 화면. 연락 수단은 이메일과 GitHub 뿐이다. */
 export function Contact() {
   const email = emailAddress()
 
@@ -228,16 +228,6 @@ export function Contact() {
                 </a>
               </Magnetic>
 
-              <Magnetic>
-                <a
-                  href={profile.blog}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="text-lede text-paper-dim transition-colors hover:text-paper"
-                >
-                  블로그
-                </a>
-              </Magnetic>
             </div>
           </Reveal>
 

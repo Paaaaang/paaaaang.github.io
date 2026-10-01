@@ -34,8 +34,6 @@ export const profile = {
   /** 스크래퍼 대응: 조각으로 보관하고 런타임에 합친다. */
   emailParts: ['play0414', 'naver.com'],
   github: 'https://github.com/Paaaaang',
-  /** GitHub 프로필에 걸어둔 블로그. 커리어 기본 정보로만 노출한다. */
-  blog: 'https://axcore.ai.kr/',
   /**
    * 이력서 사진. `public/media/profile/` 에 파일을 넣고 경로를 채운다.
    * 비워 두면 히어로에 빈 프레임이 그려지고 레이아웃은 그대로 유지된다.
