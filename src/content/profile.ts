@@ -388,7 +388,8 @@ export const caseStudies: CaseStudy[] = [
     links: [{ label: 'TAP TO ME GitHub', href: 'https://github.com/Paaaaang/TTM' }],
     diagrams: ['ttm-flow'],
     // 화면은 발표 자료(실전프로젝트_TTM.pdf)의 구현 화면 슬라이드를 잘라 썼다.
-    // 13쪽 Main Process · 14쪽 STEP 1 · 16쪽 STEP 3 · 10쪽 IA. 슬라이드 원본 비율 그대로 한 줄씩 쓴다.
+    // 13쪽 Main Process · 14쪽 STEP 1 · 15쪽 STEP 2 · 16쪽 STEP 3 · 10쪽 IA. 슬라이드 원본 비율 그대로 한 줄씩 쓴다.
+    // STEP 2 는 PDF 보다 나중에 고친 슬라이드(본인이 보낸 캡처)를 썼다. 세 경로의 화면이 각각 다르게 담겨 있다.
     media: [
       {
         kind: '화면 설계',
@@ -409,6 +410,16 @@ export const caseStudies: CaseStudy[] = [
         span: 'full',
         uncapped: true,
         alt: 'STEP 1 맞춤 설정 다섯 화면. 로그인·회원가입, 성별·키·몸무게를 받는 기본 정보 입력, 고혈압·당뇨·비만·알러지 등을 고르는 질병 유무 선택(알러지를 고르면 견과류·갑각류/해산물·우유/유제품·계란 항목이 열린다), 아예 안 함부터 매일까지 고르는 운동량 선택, 5시간 이하부터 9시간 이상까지 고르는 수면시간 선택.',
+      },
+      {
+        kind: '화면 설계',
+        ratio: 'natural',
+        caption: 'TAP TO ME — STEP 2 촬영: 직접 추가 · 사진 촬영 · 앨범에서 선택',
+        src: '/media/tap-to-me/ttm-step2-capture.jpg',
+        size: [1600, 806],
+        span: 'full',
+        uncapped: true,
+        alt: 'STEP 2 촬영 화면. 홈의 점심 칸에서 식단 추가를 누르면 세 경로로 이어진다. 직접 추가는 음식 검색과 분류 탭 아래에서 보리밥을 고르면 탄수화물 70.6g·단백질 5.5g·지방 0.1g, 316 kcal, 200g이 뜨고 수량을 정해 목록에 담는 화면이다. 사진 촬영은 카메라 화면, 앨범에서 선택은 고른 비빔밥 사진을 확인하고 이 사진으로 분석하기나 다시 촬영하기를 누르는 화면이다.',
       },
       {
         kind: '화면 설계',
