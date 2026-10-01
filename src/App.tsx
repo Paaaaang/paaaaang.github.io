@@ -25,7 +25,7 @@ import { useReducedMotion } from './hooks/useMotionPreference'
  * 02 Experience   무엇을 해 왔나 (연도별 경험 목록)
  * 03 Case         증거는 무엇인가 (경험 넷을 자세히, 한 번에 하나만 펼친다)
  * 04 How I Work   일하는 순서
- * 05 Toolkit      무엇을 다루나
+ * 05 Certificates 무엇을 다루고 받았나
  * 06 Contact      연락
  */
 export default function App() {

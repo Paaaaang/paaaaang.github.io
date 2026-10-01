@@ -824,6 +824,6 @@ export const sections = [
   { id: 'work', label: '02 Experience', n: '02', name: '경험' },
   { id: 'cases', label: '03 Case', n: '03', name: 'CASE' },
   { id: 'method', label: '04 How I Work', n: '04', name: '일하는 순서' },
-  { id: 'toolkit', label: '05 Toolkit', n: '05', name: '다루는 것과 받은 것' },
+  { id: 'toolkit', label: '05 Certificates', n: '05', name: 'Certificates' },
   { id: 'contact', label: '06 Contact', n: '06', name: '연락' },
 ] as const

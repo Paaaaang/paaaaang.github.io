@@ -132,10 +132,10 @@ function AwardsStrip() {
   )
 }
 
-/** 05 Toolkit — 역량 · 자격 · 수상. 스캔하듯 읽는 구간이라 표에 가깝게 짠다. */
+/** 05 Certificates — 역량 · 자격 · 수상. 스캔하듯 읽는 구간이라 표에 가깝게 짠다. */
 export function Toolkit() {
   return (
-    <Chapter id="toolkit" index="05" label="Toolkit" title={['다루는 것과 받은 것']}>
+    <Chapter id="toolkit" index="05" label="Certificates" title={['Certificates']}>
       <div className="mt-14 grid gap-12 md:grid-cols-3 md:gap-8">
         {skillGroups.map((group, i) => (
           <Reveal key={group.group} delay={i * 0.06}>
