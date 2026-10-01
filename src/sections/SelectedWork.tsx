@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { OPEN_CASE_EVENT, revealCase } from '../components/caseAccordion'
 import { useReducedMotion } from '../hooks/useMotionPreference'
 import { caseStudies, timeline, type CaseStudy } from '../content/profile'
@@ -12,7 +13,7 @@ import { Diagram } from '../components/diagrams'
 import { scrollToSection } from '../hooks/useSmoothScroll'
 
 /**
- * 02 Work — 경험, 03 Case Study — 케이스 스터디.
+ * 02 Experience — 경험, 03 Case — CASE.
  *
  * 두 챕터로 나눈다. 02 는 연도별 목록(Project Summary) 하나로 전체를 보여 주고,
  * 03 은 그중 CASE 가 붙은 넷을 자세히 펼친다. 목록의 CASE 줄을 누르면 03 에서
@@ -52,14 +53,14 @@ export function SelectedWork() {
 
   return (
     <>
-      <Chapter id="work" index="02" label="Work" title={['경험']} accent={null}>
+      <Chapter id="work" index="02" label="Experience" title={['경험']} accent={null}>
         <ProjectSummary openId={openId} onToggle={toggle} />
       </Chapter>
       <Chapter
         id="cases"
         index="03"
-        label="Case Study"
-        title={['케이스 스터디']}
+        label="Case"
+        title={['CASE']}
         accent={null}
         rail={<CaseRail openId={openId} />}
       >
@@ -313,6 +314,10 @@ function CaseArticle({
     const first = firstRun.current
     firstRun.current = false
     if (!open) {
+      // 펼치는 중에 다른 케이스로 넘어가면 높이 트윈이 중간에 멈춰 인라인 height 가 남는다.
+      // until-found 는 display:none 이 아니라 상자를 남기므로, 그 높이만큼 빈칸이 생긴다.
+      gsap.killTweensOf(el)
+      gsap.set(el, { clearProps: 'height,opacity' })
       // until-found 를 모르는 브라우저는 평범한 hidden 으로 동작한다.
       el.setAttribute('hidden', 'until-found')
       return
@@ -323,129 +328,151 @@ function CaseArticle({
     const tween = gsap.fromTo(
       el,
       { height: 0, opacity: 0 },
-      { height: 'auto', opacity: 1, duration: 0.7, ease: 'power3.out', clearProps: 'height,opacity' },
+      {
+        height: 'auto',
+        opacity: 1,
+        duration: 0.7,
+        ease: 'power3.out',
+        clearProps: 'height,opacity',
+        // 다 펼쳐진 뒤의 높이로 아래 트리거 위치를 다시 잰다.
+        onComplete: () => ScrollTrigger.refresh(),
+      },
     )
     return () => {
       tween.kill()
+      gsap.set(el, { clearProps: 'height,opacity' })
     }
   }, [open, reduced])
-
-  // 자료 목록. 경험 밖에서 오는 자료(예: 아키텍처 이미지)는 여기에 붙이면
-  // 갤러리 줄 나누기(MediaGallery)가 같이 따라온다.
-  const media = withArchitecture(study.id, study.media)
 
   return (
     // id 끝의 "-detail" 은 인쇄 스타일이 알아보는 표시다. PDF 에서는 닫힌 경험도 펼쳐 찍는다.
     <div ref={wrapRef} id={`${study.id}-detail`} className="overflow-hidden">
       <article ref={ref} id={study.id} aria-label={study.title} className="scroll-mt-24 pt-10">
-        {/* ---- 머리 ---- */}
-        <header>
-          <Reveal>
-            <div className="flex items-baseline gap-5">
-              <span
-                className="text-[clamp(2.75rem,6vw,4.75rem)] leading-none font-bold tracking-[-0.05em] tnum"
-                style={{ color: study.accent }}
-              >
-                {study.index}
-              </span>
-              {/* 번호(76px)와 제목(48px) 사이의 부제. 11px 모노로 두면 둘 사이에서 사라진다. */}
-              <span className="text-sm font-semibold tracking-[-0.01em] text-paper-dim">{study.kicker}</span>
-            </div>
-          </Reveal>
-
-          <MaskedLines
-            lines={splitTitle(study.title)}
-            className="mt-8 max-w-[20ch] text-chapter"
-            as="h3"
-            delay={0.05}
-          />
-
-          <Reveal delay={0.12}>
-            <p className="measure mt-8 text-lede leading-[1.75] text-paper-dim">{study.summary}</p>
-          </Reveal>
-        </header>
-
-        {/* ---- 정보표 ---- */}
-        <Reveal delay={0.18}>
-          <Spec study={study} />
-        </Reveal>
-
-        {/* ---- 결과 ---- */}
-        <Results study={study} />
-
-        {/* ---- 상세 ---- */}
-        <div className="mt-14 space-y-14">
-          <Row label="문제">
-            <Reveal stagger className="space-y-3">
-              {study.problem.map((line) => (
-                <p key={line} className="measure leading-[1.85] text-paper-dim">
-                  {line}
-                </p>
-              ))}
-            </Reveal>
-          </Row>
-
-          <Row label="목표">
-            <Reveal>
-              <p className="measure text-lede leading-[1.7] font-medium text-paper">{study.goal}</p>
-            </Reveal>
-          </Row>
-
-          <Row label="핵심 결정">
-            <Decisions study={study} />
-          </Row>
-
-          {study.diagrams && study.diagrams.length > 0 && (
-            <Row label="구조도">
-              <div className="grid gap-6">
-                {study.diagrams.map((key) => (
-                  <Diagram key={key} id={key} />
-                ))}
-              </div>
-            </Row>
-          )}
-
-          {media.length > 0 && (
-            <Row label="자료">
-              <MediaGallery slots={media} />
-            </Row>
-          )}
-
-          <Row label="회고">
-            <Reveal>
-              <blockquote className="border-l-2 pl-6" style={{ borderColor: study.accent }}>
-                <p className="measure text-lede leading-[1.7] text-paper">{study.learning}</p>
-              </blockquote>
-            </Reveal>
-          </Row>
-        </div>
-
-        {/* ---- 끝: 닫고 목록으로, 또는 다음 경험으로 ---- */}
-        <div
-          data-print="hide"
-          className="rule mt-14 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-5 text-sm"
-        >
-          <button
-            type="button"
-            onClick={onClose}
-            className="font-semibold text-paper-faint transition-colors hover:text-paper"
-          >
-            닫고 목록으로 ↑
-          </button>
-          <button
-            type="button"
-            onClick={() => revealCase(next.id)}
-            className="group inline-flex items-baseline gap-2 font-semibold transition-colors hover:text-(--accent)"
-          >
-            <span className="font-mono text-xs text-paper-faint">다음 · {next.index}</span>
-            {next.short}
-            <span aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-0.5">
-              →
-            </span>
-          </button>
-        </div>
+        {/* 열 때마다 안쪽을 새로 마운트한다. 닫힌 채(hidden) 처음 마운트된 안쪽은 스크롤 등장
+            트리거가 크기 0 으로 재져 이미 지나간 것으로 끝나 버리고(once), 내용이 투명한 채 남는다.
+            열린 뒤에 새로 마운트하면 보이는 상태에서 트리거를 만든다. 숨김은 부모의 layout effect 가
+            먼저 걷고, 안쪽의 트리거(useEffect)는 그 뒤에 만들어진다. */}
+        <CaseBody key={open ? 'open' : 'closed'} study={study} next={next} onClose={onClose} />
       </article>
     </div>
+  )
+}
+
+/** 케이스 한 편의 내용. 머리 · 정보표 · 결과 · 상세 · 끝 버튼. */
+function CaseBody({ study, next, onClose }: { study: CaseStudy; next: CaseStudy; onClose: () => void }) {
+  // 자료 목록. 경험 밖에서 오는 자료(예: 아키텍처 이미지)는 여기에 붙이면
+  // 갤러리 줄 나누기(MediaGallery)가 같이 따라온다.
+  const media = withArchitecture(study.id, study.media)
+
+  return (
+    <>
+      {/* ---- 머리 ---- */}
+      <header>
+        <Reveal>
+          <div className="flex items-baseline gap-5">
+            <span
+              className="text-[clamp(2.75rem,6vw,4.75rem)] leading-none font-bold tracking-[-0.05em] tnum"
+              style={{ color: study.accent }}
+            >
+              {study.index}
+            </span>
+            {/* 번호(76px)와 제목(48px) 사이의 부제. 11px 모노로 두면 둘 사이에서 사라진다. */}
+            <span className="text-sm font-semibold tracking-[-0.01em] text-paper-dim">{study.kicker}</span>
+          </div>
+        </Reveal>
+
+        <MaskedLines
+          lines={splitTitle(study.title)}
+          className="mt-8 max-w-[20ch] text-chapter"
+          as="h3"
+          delay={0.05}
+        />
+
+        <Reveal delay={0.12}>
+          <p className="measure mt-8 text-lede leading-[1.75] text-paper-dim">{study.summary}</p>
+        </Reveal>
+      </header>
+
+      {/* ---- 정보표 ---- */}
+      <Reveal delay={0.18}>
+        <Spec study={study} />
+      </Reveal>
+
+      {/* ---- 결과 ---- */}
+      <Results study={study} />
+
+      {/* ---- 상세 ---- */}
+      <div className="mt-14 space-y-14">
+        <Row label="문제">
+          <Reveal stagger className="space-y-3">
+            {study.problem.map((line) => (
+              <p key={line} className="measure leading-[1.85] text-paper-dim">
+                {line}
+              </p>
+            ))}
+          </Reveal>
+        </Row>
+
+        <Row label="목표">
+          <Reveal>
+            <p className="measure text-lede leading-[1.7] font-medium text-paper">{study.goal}</p>
+          </Reveal>
+        </Row>
+
+        <Row label="핵심 결정">
+          <Decisions study={study} />
+        </Row>
+
+        {study.diagrams && study.diagrams.length > 0 && (
+          <Row label="구조도">
+            <div className="grid gap-6">
+              {study.diagrams.map((key) => (
+                <Diagram key={key} id={key} />
+              ))}
+            </div>
+          </Row>
+        )}
+
+        {media.length > 0 && (
+          <Row label="자료">
+            <MediaGallery slots={media} />
+          </Row>
+        )}
+
+        <Row label="회고">
+          <Reveal>
+            <blockquote className="border-l-2 pl-6" style={{ borderColor: study.accent }}>
+              <p className="measure text-lede leading-[1.7] text-paper">{study.learning}</p>
+            </blockquote>
+          </Reveal>
+        </Row>
+      </div>
+
+      {/* ---- 끝: 닫고 목록으로, 또는 다음 경험으로 ---- */}
+      <div
+        data-print="hide"
+        className="rule mt-14 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-5 text-sm"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="font-semibold text-paper-faint transition-colors hover:text-paper"
+        >
+          닫고 목록으로 ↑
+        </button>
+        <button
+          type="button"
+          onClick={() => revealCase(next.id)}
+          className="group inline-flex items-baseline gap-2 font-semibold transition-colors hover:text-(--accent)"
+        >
+          <span className="font-mono text-xs text-paper-faint">다음 · {next.index}</span>
+          {next.short}
+          <span aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-0.5">
+            →
+          </span>
+        </button>
+      </div>
+    </>
   )
 }
 

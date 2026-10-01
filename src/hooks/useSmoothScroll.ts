@@ -55,16 +55,27 @@ export function useSmoothScroll(enabled: boolean) {
 const HEADER_OFFSET = 72
 
 /** 앵커 이동. Lenis 가 있으면 Lenis 로, 없으면 네이티브로 스크롤한다. */
-export function scrollToSection(id: string) {
+export function scrollToSection(id: string, { duration = 1.2, onComplete }: { duration?: number; onComplete?: () => void } = {}) {
   const target = document.getElementById(id)
   if (!target) return
 
   const lenis = getLenis()
   if (lenis) {
-    lenis.scrollTo(target, { offset: -HEADER_OFFSET, duration: 1.2 })
+    // 바로 앞에서 문서 높이가 바뀌었을 수 있다(케이스를 닫고 여는 경우). Lenis 가 들고 있는
+    // 스크롤 한계와 현재 위치를 먼저 다시 읽어야 목표 위치를 제대로 잡는다.
+    lenis.resize()
+    lenis.scrollTo(target, { offset: -HEADER_OFFSET, duration, onComplete })
   } else {
     // 고정 바에 제목이 가리지 않도록 직접 계산해서 이동한다.
     const top = target.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET
     window.scrollTo({ top, behavior: 'auto' })
+    onComplete?.()
   }
+}
+
+/** 목표가 고정 바 바로 아래에 있는지. 스크롤 중에 레이아웃이 바뀌면 어긋난다. */
+export function isAtSection(id: string, tolerance = 8) {
+  const target = document.getElementById(id)
+  if (!target) return true
+  return Math.abs(target.getBoundingClientRect().top - HEADER_OFFSET) <= tolerance
 }

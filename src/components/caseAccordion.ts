@@ -1,5 +1,5 @@
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { scrollToSection } from '../hooks/useSmoothScroll'
+import { isAtSection, scrollToSection } from '../hooks/useSmoothScroll'
 
 /**
  * 경험을 여는 신호.
@@ -16,7 +16,13 @@ export function revealCase(id: string) {
   requestAnimationFrame(() =>
     requestAnimationFrame(() => {
       ScrollTrigger.refresh()
-      scrollToSection(id)
+      // 열린 케이스는 0.7초 동안 펼쳐지고, 닫힌 케이스는 바로 접힌다. 그동안 문서 높이가
+      // 바뀌어 첫 이동이 빗나갈 수 있다. 도착한 뒤 자리가 어긋나 있으면 한 번 더 짧게 맞춘다.
+      scrollToSection(id, {
+        onComplete: () => {
+          if (!isAtSection(id)) scrollToSection(id, { duration: 0.45 })
+        },
+      })
     }),
   )
 }

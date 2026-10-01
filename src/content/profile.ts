@@ -332,6 +332,8 @@ export const caseStudies: CaseStudy[] = [
         ratio: 'natural',
         span: 'full',
         caption: '전대주주 플랫폼 랜딩 — 비회원이 처음 닿는 화면',
+        // 원래 캡처는 이 폭에서 제목이 "동아 / 리,"로 어절 중간에서 끊겼다(사이트 제목에 keep-all 이 없음).
+        // 캡처 안의 글자를 그대로 떼어 "돈이 돈답게 / 일하는 동아리,"로 줄만 다시 나눴다. 글꼴과 색은 원본 그대로.
         src: '/media/interview-ops/landing.jpg',
         size: [1100, 704],
         alt: '전대주주 랜딩 페이지. 캔들 차트 배경 위에 "돈이 돈답게 일하는 동아리, 전대주주" 헤드라인과 동아리 소개 보기 버튼, 하단 시세 티커.',
@@ -837,8 +839,8 @@ export const awards = [
 export const sections = [
   { id: 'hero', label: '처음', n: '', name: '처음' },
   { id: 'about', label: '01 About', n: '01', name: '소개' },
-  { id: 'work', label: '02 Work', n: '02', name: '경험' },
-  { id: 'cases', label: '03 Case Study', n: '03', name: '케이스 스터디' },
+  { id: 'work', label: '02 Experience', n: '02', name: '경험' },
+  { id: 'cases', label: '03 Case', n: '03', name: 'CASE' },
   { id: 'method', label: '04 How I Work', n: '04', name: '일하는 순서' },
   { id: 'retro', label: '05 Retrospective', n: '05', name: '틀리고 나서 바꾼 것' },
   { id: 'toolkit', label: '06 Toolkit', n: '06', name: '다루는 것과 받은 것' },

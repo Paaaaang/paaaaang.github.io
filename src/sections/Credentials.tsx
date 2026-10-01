@@ -193,9 +193,9 @@ export function Contact() {
         <div className="min-w-0">
           <Reveal>
             <h2 className="max-w-[16ch] text-display">
-              만들 수 있는
+              가치를 담아낼 수 있는
               <br />
-              <span style={{ color: 'var(--accent)' }}>기획을 내놓겠습니다</span>
+              <span style={{ color: 'var(--accent)' }}>기획을 하겠습니다</span>
             </h2>
           </Reveal>
 
