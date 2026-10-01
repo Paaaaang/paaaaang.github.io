@@ -16,10 +16,10 @@ import { scrollToSection } from '../hooks/useSmoothScroll'
  *
  * 연도별 목록(Project Summary) 하나로 전체를 보여 주고, CASE 가 붙은 세 줄은
  * 누르면 목록 맨 아래 한 칸에서 그 경험이 아코디언으로 열린다. 한 번에 하나만 연다.
- * 세 경험을 늘 길게 쌓아 두면 목록을 다 읽기도 전에 페이지가 끝없이 길어지고,
+ * 경험을 모두 늘 길게 쌓아 두면 목록을 다 읽기도 전에 페이지가 끝없이 길어지고,
  * 목록과 상세가 같은 이야기를 두 번 한다.
  *
- * 열린 경험은 세 경험 모두 같은 뼈대로 읽힌다.
+ * 열린 경험은 어느 것이든 같은 뼈대로 읽힌다.
  *   번호 · 제목 · 요약 → 정보표 → 결과 → 문제 → 목표 → 핵심 결정 → 구조도 → 자료 → 회고
  * 기획자가 실제로 쓰는 문서 순서라 읽는 사람이 다음에 무엇이 올지 안다.
  *
@@ -27,7 +27,7 @@ import { scrollToSection } from '../hooks/useSmoothScroll'
  * 하나만 남는 식의 빈칸을 만들지 않는다. 빈칸은 "뭔가 빠졌나" 하고 멈추게 한다.
  *
  * 닫힌 경험도 DOM 에는 남긴다(hidden="until-found"). 브라우저 찾기(Ctrl+F)로
- * 찾아지고, PDF 에서는 인쇄 스타일이 셋 다 펼친다.
+ * 찾아지고, PDF 에서는 인쇄 스타일이 전부 펼친다.
  */
 export function SelectedWork() {
   // 처음에는 01 을 열어 둔다. 목록 아래가 비어 있으면 "여기서 끝"으로 읽힌다.
@@ -116,8 +116,8 @@ function ProjectSummary({ openId, onToggle }: { openId: string | null; onToggle:
                       )}
                     </>
                   )
-                  // 대표 경험으로 이어지는 줄은 몇 번 경험인지 적는다. "Detail" 만 있으면
-                  // TAP TO ME 와 PRISM 이 같은 03 으로 간다는 걸 누르기 전에는 모른다.
+                  // 대표 경험으로 이어지는 줄은 몇 번 경험인지 적는다. 아래 경험 칸의 번호와
+                  // 같아서, 누르기 전에 어느 경험이 열릴지 안다.
                   const target = item.href ? caseStudies.find((c) => c.id === item.href) : undefined
                   const isOpen = !!item.href && openId === item.href
                   return (
@@ -216,9 +216,9 @@ function splitTitle(title: string): string[] {
 }
 
 /**
- * 목록 맨 아래의 경험 칸. 세 경험 중 열린 하나만 보인다.
+ * 목록 맨 아래의 경험 칸. 경험 중 열린 하나만 보인다.
  *
- * 머리에 세 경험 바로가기를 둔다. 넓은 화면에서는 왼쪽 레일이 같은 일을 하지만
+ * 머리에 경험 바로가기를 둔다. 넓은 화면에서는 왼쪽 레일이 같은 일을 하지만
  * 좁은 화면에는 레일이 없어서, 다른 경험으로 가려면 목록까지 올라가야 한다.
  */
 function CasePanel({ openId, onClose }: { openId: string | null; onClose: (backToList: boolean) => void }) {
@@ -270,7 +270,7 @@ function CasePanel({ openId, onClose }: { openId: string | null; onClose: (backT
   )
 }
 
-/** 경험 하나. 세 경험이 같은 뼈대와 같은 행 순서를 쓴다. */
+/** 경험 하나. 모든 경험이 같은 뼈대와 같은 행 순서를 쓴다. */
 function CaseArticle({
   study,
   open,
@@ -448,7 +448,7 @@ function CaseArticle({
  * 예전에는 3열 격자에 칸을 채워서 경험마다 칸 수(6 · 4 · 5)에 따라
  * 둘째 줄에 빈칸이 생기고, 도구는 격자 밖 별도 줄에 떠 있었다.
  * 한 줄 한 칸이면 값이 없는 칸은 줄째로 빠질 뿐 빈자리가 남지 않고,
- * 세 경험에서 같은 정보가 늘 같은 순서, 같은 위치에 있다.
+ * 모든 경험에서 같은 정보가 늘 같은 순서, 같은 위치에 있다.
  */
 function Spec({ study }: { study: CaseStudy }) {
   const rows: [string, ReactNode][] = [

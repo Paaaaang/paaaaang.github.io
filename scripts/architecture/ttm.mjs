@@ -1,5 +1,5 @@
 /**
- * TAP TO ME (케이스 edge-ai)
+ * TAP TO ME (케이스 tap-to-me)
  *
  * 원본은 TTM 저장소 README 의 "시스템 아키텍처" 그림이다. 거기 있는 상자와 화살표만 옮긴다.
  * - 사용자 ↔ [프론트엔드 · 앱] Flutter ↔ [클라우드] Render ↔ [백엔드] Node.js · FastAPI

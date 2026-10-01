@@ -216,7 +216,7 @@ async function assertStaticDocument(page) {
  * 닫힌 경험을 모두 펼친다.
  *
  * 화면에서는 경험을 한 번에 하나만 연다. 버튼을 차례로 누르면 앞에 연 것이 닫히므로
- * 누르지 않고, 닫힌 경험에 걸린 hidden="until-found" 를 걷어 셋 다 드러낸다.
+ * 누르지 않고, 닫힌 경험에 걸린 hidden="until-found" 를 걷어 전부 드러낸다.
  * (예전 방식의 "자세히 보기" 버튼이 남아 있으면 그것도 눌러 둔다.)
  */
 async function expandCases(page) {

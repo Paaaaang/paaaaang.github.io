@@ -128,7 +128,7 @@ export function MediaFrame({ slot, role = 'full' }: { slot: MediaSlot; role?: Me
 }
 
 /**
- * 자료를 줄로 나눈다. 세 경험이 같은 규칙을 쓴다.
+ * 자료를 줄로 나눈다. 모든 경험이 같은 규칙을 쓴다.
  *
  * 1. `span: 'full'` 인 자료는 한 줄을 혼자 쓴다. 정하지 않으면 첫 자료만 full.
  * 2. 나머지는 나온 순서대로 둘씩 짝을 짓는다. 짝은 같은 틀이라 높이가 맞는다.

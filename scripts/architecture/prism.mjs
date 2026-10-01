@@ -1,5 +1,5 @@
 /**
- * PRISM (케이스 edge-ai)
+ * PRISM (케이스 prism)
  *
  * 원본은 PRISM 저장소 README 의 "시스템 아키텍처" 그림이다. 거기 있는 상자와 화살표만 옮긴다.
  * - 사용자 → [대시보드] HTML · CSS · JavaScript
