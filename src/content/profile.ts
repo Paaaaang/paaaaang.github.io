@@ -294,7 +294,8 @@ export const caseStudies: CaseStudy[] = [
     team: '개인 · 회원 217명이 쓰는 플랫폼의 하위 시스템',
     note: '지원서 접수부터 면접 일정 조율, 현장 운영, 합격자 취합까지 운영 중',
     tools: ['요구사항 정의', '역할별 권한 설계', '화면 설계', 'AI 코딩 도구'],
-    links: [{ label: 'jeondaejuju.com', href: 'https://jeondaejuju.com' }],
+    // 지금 운영 중인 사이트. 링크는 본인이 준 주소 그대로.
+    links: [{ label: '운영 중 · www.jeondaejuju.com', href: 'https://www.jeondaejuju.com/' }],
     diagrams: ['interview-flow'],
     media: [
       {

@@ -96,71 +96,120 @@ const ACTOR_COLOR: Record<Actor, string> = {
 /* ------------------------------------------------------------------ */
 
 /**
- * 면접 운영 흐름. 넓은 화면에서는 누가 하는 일인지에 따라 세 칸(레인) 중
- * 한 칸에 놓이고, 왼쪽 척추선이 위에서 아래로 그려진다. 좁은 화면에서는
- * 한 줄로 쌓고 행위자를 꼬리표로 붙인다.
+ * 면접 관리 시스템 운영 흐름.
+ *
+ * 처음에는 누가 하는 일인지에 따라 세 칸(레인)에 카드를 흩어 놓았다. 한 칸만 보면
+ * 여섯 단계 중 두세 개만 차서 빈칸이 더 많았고, 좁은 화면에서는 카드가 잘렸다.
+ * 지금은 한 줄로 쌓고 행위자는 카드마다 꼬리표로 붙인다. 순서가 곧 내용이라서다.
+ *
+ * 스크롤하면 번호 사이 선이 위에서 아래로 차오르고, 선이 다음 번호에 닿는 순간
+ * 그 단계가 켜진다. 모션을 줄이면(PDF 포함) 처음부터 모든 단계가 켜진 상태로 보인다.
  */
 function InterviewFlow() {
-  const lanes: Actor[] = ['user', 'ops', 'system']
   const { nodes, actors, caption } = interviewFlow
+  const listRef = useRef<HTMLOListElement>(null)
+  const reduced = useReducedMotion()
+
+  useEffect(() => {
+    const list = listRef.current
+    if (!list || reduced) return
+    const steps = Array.from(list.querySelectorAll<HTMLElement>(':scope > li'))
+    const ctx = gsap.context(() => {
+      steps.forEach((step, i) => {
+        // 켜지는 선: 이 단계 머리가 화면 65% 지점에 닿을 때.
+        step.dataset.active = 'false'
+        ScrollTrigger.create({
+          trigger: step,
+          start: 'top 65%',
+          onEnter: () => (step.dataset.active = 'true'),
+          onLeaveBack: () => (step.dataset.active = 'false'),
+        })
+        // 다음 단계까지 이어지는 선은 같은 기준으로 다음 단계 머리까지 차오른다.
+        const fill = step.querySelector<HTMLElement>('[data-flow-fill]')
+        const next = steps[i + 1]
+        if (fill && next) {
+          gsap.fromTo(
+            fill,
+            { scaleY: 0 },
+            {
+              scaleY: 1,
+              ease: 'none',
+              scrollTrigger: { trigger: step, start: 'top 65%', endTrigger: next, end: 'top 65%', scrub: true },
+            },
+          )
+        }
+      })
+    }, list)
+    return () => {
+      ctx.revert()
+      steps.forEach((step) => delete step.dataset.active)
+    }
+  }, [reduced])
 
   return (
-    <Frame label="면접 운영 흐름" caption={caption}>
-      {/* 레인 머리 */}
-      <div className="hidden grid-cols-[2rem_repeat(3,minmax(0,1fr))] gap-x-3 md:grid">
-        <span />
-        {lanes.map((lane) => (
-          <span
-            key={lane}
-            className="border-b border-ink-line pb-2 font-mono text-[0.66rem] tracking-[0.16em] uppercase"
-            style={{ color: ACTOR_COLOR[lane] }}
-          >
-            {actors[lane]}
-          </span>
+    <Frame label="면접 관리 시스템 운영 흐름" caption={caption}>
+      {/* 행위자 범례. 카드의 꼬리표와 같은 색이다. */}
+      <ul className="flex flex-wrap gap-x-4 gap-y-2" aria-label="누가 하는 일인지">
+        {(['user', 'ops', 'system'] as Actor[]).map((who) => (
+          <li key={who} className="flex items-center gap-1.5 text-xs text-paper-dim">
+            <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: ACTOR_COLOR[who] }} />
+            {actors[who] ?? actorLabel[who]}
+          </li>
         ))}
-      </div>
+      </ul>
 
-      <ol className="relative mt-3 grid gap-y-3">
-        <span
-          data-draw="spine"
-          aria-hidden="true"
-          className="absolute top-2 bottom-2 left-[0.95rem] w-px"
-          style={{ background: 'color-mix(in oklab, var(--accent) 60%, transparent)' }}
-        />
+      <ol ref={listRef} className="mt-6">
         {nodes.map((node, i) => {
-          const lane = lanes.indexOf(node.who)
+          const last = i === nodes.length - 1
           return (
-            <li
-              key={node.title}
-              className="relative grid grid-cols-[2rem_minmax(0,1fr)] items-start gap-x-3 md:grid-cols-[2rem_repeat(3,minmax(0,1fr))]"
-            >
-              <span
-                data-draw="node"
-                className="relative z-10 mt-2.5 grid h-5 w-5 place-items-center justify-self-center rounded-full border bg-ink font-mono text-[0.6rem] tnum"
-                style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
-              >
-                {i + 1}
-              </span>
+            <li key={node.title} className="group/step relative grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-4">
+              {/* 번호와 다음 단계로 이어지는 선 */}
+              <div className="relative flex justify-center">
+                {!last && (
+                  <span aria-hidden="true" className="absolute top-8 -bottom-1 left-1/2 w-px -translate-x-1/2 bg-ink-line">
+                    <span
+                      data-flow-fill
+                      className="absolute inset-0 origin-top"
+                      style={{ background: 'var(--accent)' }}
+                    />
+                  </span>
+                )}
+                <span
+                  className="relative z-10 grid h-8 w-8 place-items-center rounded-full border font-mono text-[0.7rem] font-semibold tnum transition-[background-color,color,transform] duration-500 bg-(--accent) text-ink group-data-[active=false]/step:scale-90 group-data-[active=false]/step:bg-ink group-data-[active=false]/step:text-(--accent)"
+                  style={{ borderColor: 'var(--accent)' }}
+                >
+                  {i + 1}
+                </span>
+              </div>
+
               <div
-                data-draw="node"
-                className="rounded-sm border bg-ink px-4 py-3 md:col-start-(--lane)"
+                className={`mb-3 rounded-sm border bg-ink px-4 py-3 transition-opacity duration-500 group-data-[active=false]/step:opacity-45 md:grid md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] md:items-baseline md:gap-x-6 ${
+                  last ? 'mb-0' : ''
+                }`}
                 style={{
                   borderColor: node.key
                     ? 'color-mix(in oklab, var(--accent) 60%, var(--color-ink-line))'
                     : 'var(--color-ink-line)',
-                  // 넓은 화면에서만 레인 칸으로 민다. 좁은 화면은 두 번째 칸 고정.
-                  ['--lane' as string]: String(lane + 2),
                 }}
               >
-                <span
-                  className="font-mono text-[0.62rem] tracking-[0.16em] uppercase md:hidden"
-                  style={{ color: ACTOR_COLOR[node.who] }}
-                >
-                  {actors[node.who] ?? actorLabel[node.who]}
-                </span>
-                <p className="text-[0.92rem] leading-snug font-bold tracking-[-0.02em]">{node.title}</p>
+                <div className="min-w-0">
+                  <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="text-[0.7rem] font-semibold" style={{ color: ACTOR_COLOR[node.who] }}>
+                      {actors[node.who] ?? actorLabel[node.who]}
+                    </span>
+                    {node.key && (
+                      <span
+                        className="rounded-sm px-1.5 py-px text-[0.62rem] font-semibold text-ink"
+                        style={{ background: 'var(--accent)' }}
+                      >
+                        핵심
+                      </span>
+                    )}
+                  </p>
+                  <p className="mt-1 text-[0.95rem] leading-snug font-bold tracking-[-0.02em]">{node.title}</p>
+                </div>
                 {node.note && (
-                  <p className="mt-1.5 text-xs leading-relaxed text-paper-dim">{node.note}</p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-paper-dim md:mt-0 md:text-[0.82rem]">{node.note}</p>
                 )}
               </div>
             </li>
