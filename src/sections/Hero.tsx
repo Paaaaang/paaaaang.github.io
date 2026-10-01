@@ -129,7 +129,11 @@ export function Hero() {
             </p>
 
             <p className="measure mt-5 text-[0.94rem] leading-[1.7] text-paper-dim sm:mt-6 sm:text-base sm:leading-[1.75] [@media(max-height:820px)]:sm:mt-4">
-              {profile.subthesis}
+              {profile.subthesis.map((line, i) => (
+                <span key={line} className={i > 0 ? 'mt-1 block' : 'block'}>
+                  {line}
+                </span>
+              ))}
             </p>
 
             {/* ---- 연락처 ----
