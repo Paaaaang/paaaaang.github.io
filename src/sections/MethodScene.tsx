@@ -88,7 +88,7 @@ export function MethodScene() {
     >
       <div className="mx-auto grid w-full max-w-6xl gap-y-10 lg:grid-cols-[10rem_minmax(0,1fr)] lg:gap-x-14">
         <aside>
-          <ChapterMark index="03" label="How I Work" />
+          <ChapterMark index="04" label="How I Work" />
         </aside>
 
         <div className="min-w-0">

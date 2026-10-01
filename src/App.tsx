@@ -23,12 +23,12 @@ import { useReducedMotion } from './hooks/useMotionPreference'
  * 00 Hero          누구인가 · 연락처
  *    StatBand      규모 (팀 프로젝트 · 수상 · 자격증). 히어로 첫 화면 맨 아래에 붙는다
  * 01 About         어떻게 일하는가
- * 02 Selected Work 증거는 무엇인가
- *    (Project Summary 타임라인이 02 머리에 붙는다)
- * 03 How I Work    일하는 순서
- * 04 Retrospective 틀리고 바꾼 것
- * 05 Toolkit       무엇을 다루나
- * 06 Contact       연락
+ * 02 Work         무엇을 해 왔나 (연도별 경험 목록)
+ * 03 Case Study   증거는 무엇인가 (경험 넷을 자세히, 한 번에 하나만 펼친다)
+ * 04 How I Work   일하는 순서
+ * 05 Retrospective 틀리고 바꾼 것
+ * 06 Toolkit      무엇을 다루나
+ * 07 Contact      연락
  */
 export default function App() {
   const reduced = useReducedMotion()

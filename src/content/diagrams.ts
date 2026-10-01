@@ -22,7 +22,7 @@ export const actorLabel: Record<Actor, string> = {
   system: '시스템',
 }
 
-/** D1 — 면접 운영 흐름 (경험 01) */
+/** D1 — 면접 운영 흐름 (Case 01) */
 export const interviewFlow: { caption: string; nodes: FlowNode[]; actors: Record<Actor, string> } = {
   caption: '지원부터 최종 선발까지 한 시스템 안에서 이어지는 흐름. 카톡으로 오가던 일정 조율과 합격자 취합이 여기로 들어왔다',
   actors: { user: '지원자', ops: '운영진', system: '자동 처리' },
@@ -46,7 +46,7 @@ export const interviewFlow: { caption: string; nodes: FlowNode[]; actors: Record
   ],
 }
 
-/** D2 — 체험 시간 (경험 02). 축은 0–80분, 기준선은 그룹당 60분. */
+/** D2 — 체험 시간 (Case 04). 축은 0–80분, 기준선은 그룹당 60분. */
 export const experienceTime = {
   caption: '그룹당 체험 시간. 점선은 기준 60분',
   max: 80,
@@ -59,7 +59,7 @@ export const experienceTime = {
   unit: '분',
 }
 
-/** D3 — PRISM 시스템 구성 (경험 03). 처음 설계와 바꾼 설계. */
+/** D3 — PRISM 시스템 구성 (Case 03). 처음 설계와 바꾼 설계. */
 export const prismArch = {
   caption: '핵심 결정 "판단은 현장에, 기록은 서버에"의 전후',
   before: {
@@ -79,7 +79,7 @@ export const prismArch = {
   },
 }
 
-/** D4 — TAP TO ME 사용 흐름 (경험 03). 윗줄은 사용자, 아랫줄은 뒤에서 도는 기술. */
+/** D4 — TAP TO ME 사용 흐름 (Case 02). 윗줄은 사용자, 아랫줄은 뒤에서 도는 기술. */
 export const ttmFlow = {
   caption: '윗줄은 사용자가 겪는 흐름, 아랫줄은 그 뒤에서 도는 AI',
   steps: [

@@ -79,7 +79,7 @@ export function About() {
                       data-cursor-label="보기"
                       className="inline-flex shrink-0 items-center gap-1.5 text-xs whitespace-nowrap text-paper-faint transition-colors group-hover:text-paper after:absolute after:inset-0 after:rounded-sm focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-(--accent)"
                     >
-                      <span>경험 {study.index}</span>
+                      <span>Case {study.index}</span>
                       <span
                         aria-hidden="true"
                         className="inline-block transition-transform duration-300 group-hover:translate-y-0.5"

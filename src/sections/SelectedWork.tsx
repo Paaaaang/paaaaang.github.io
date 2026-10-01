@@ -12,21 +12,24 @@ import { Diagram } from '../components/diagrams'
 import { scrollToSection } from '../hooks/useSmoothScroll'
 
 /**
- * 02 Work — 경험.
+ * 02 Work — 경험, 03 Case Study — 케이스 스터디.
  *
- * 연도별 목록(Project Summary) 하나로 전체를 보여 주고, CASE 가 붙은 세 줄은
- * 누르면 목록 맨 아래 한 칸에서 그 경험이 아코디언으로 열린다. 한 번에 하나만 연다.
- * 경험을 모두 늘 길게 쌓아 두면 목록을 다 읽기도 전에 페이지가 끝없이 길어지고,
- * 목록과 상세가 같은 이야기를 두 번 한다.
+ * 두 챕터로 나눈다. 02 는 연도별 목록(Project Summary) 하나로 전체를 보여 주고,
+ * 03 은 그중 CASE 가 붙은 넷을 자세히 펼친다. 목록의 CASE 줄을 누르면 03 에서
+ * 그 케이스가 아코디언으로 열린다. 한 번에 하나만 연다. 케이스를 늘 길게 쌓아 두면
+ * 페이지가 끝없이 길어지고, 목록과 상세가 같은 이야기를 두 번 한다.
+ * 왼쪽 레일도 챕터마다 따로 선다. 02 는 번호만, 03 은 번호 아래 케이스 목차를 둔다.
  *
- * 열린 경험은 어느 것이든 같은 뼈대로 읽힌다.
+ * 케이스는 최신순(profile.ts)이라 목록과 같은 방향으로 읽힌다.
+ *
+ * 열린 케이스는 어느 것이든 같은 뼈대로 읽힌다.
  *   번호 · 제목 · 요약 → 정보표 → 결과 → 문제 → 목표 → 핵심 결정 → 구조도 → 자료 → 회고
  * 기획자가 실제로 쓰는 문서 순서라 읽는 사람이 다음에 무엇이 올지 안다.
  *
  * 격자는 항목 수에 맞춰 열 수를 고른다. 3열 격자에 4개를 넣어 마지막 줄에
  * 하나만 남는 식의 빈칸을 만들지 않는다. 빈칸은 "뭔가 빠졌나" 하고 멈추게 한다.
  *
- * 닫힌 경험도 DOM 에는 남긴다(hidden="until-found"). 브라우저 찾기(Ctrl+F)로
+ * 닫힌 케이스도 DOM 에는 남긴다(hidden="until-found"). 브라우저 찾기(Ctrl+F)로
  * 찾아지고, PDF 에서는 인쇄 스타일이 전부 펼친다.
  */
 export function SelectedWork() {
@@ -40,7 +43,7 @@ export function SelectedWork() {
     return () => window.removeEventListener(OPEN_CASE_EVENT, onOpen)
   }, [])
 
-  /** 닫기. 목록 줄에서 닫으면 그 자리에 두고, 경험 끝에서 닫으면 목록으로 돌아간다. */
+  /** 닫기. 목록 줄에서 닫으면 그 자리에 두고, 케이스 끝에서 닫으면 02 의 목록으로 돌아간다. */
   const close = (backToList: boolean) => {
     setOpenId(null)
     if (backToList) requestAnimationFrame(() => scrollToSection('work-summary'))
@@ -48,17 +51,21 @@ export function SelectedWork() {
   const toggle = (id: string) => (openId === id ? close(false) : revealCase(id))
 
   return (
-    <Chapter
-      id="work"
-      index="02"
-      label="Work"
-      title={['경험']}
-      accent={null}
-      rail={<CaseRail openId={openId} />}
-    >
-      <ProjectSummary openId={openId} onToggle={toggle} />
-      <CasePanel openId={openId} onClose={close} />
-    </Chapter>
+    <>
+      <Chapter id="work" index="02" label="Work" title={['경험']} accent={null}>
+        <ProjectSummary openId={openId} onToggle={toggle} />
+      </Chapter>
+      <Chapter
+        id="cases"
+        index="03"
+        label="Case Study"
+        title={['케이스 스터디']}
+        accent={null}
+        rail={<CaseRail openId={openId} />}
+      >
+        <CasePanel openId={openId} onClose={close} />
+      </Chapter>
+    </>
   )
 }
 
@@ -156,10 +163,10 @@ function ProjectSummary({ openId, onToggle }: { openId: string | null; onToggle:
   )
 }
 
-/** 레일 목차. 열려 있는 경험의 번호에 챕터 색이 들어온다. */
+/** 레일 목차. 열려 있는 케이스의 번호에 챕터 색이 들어온다. */
 function CaseRail({ openId }: { openId: string | null }) {
   return (
-    <nav aria-label="대표 경험 목차" className="mt-10 hidden lg:block">
+    <nav aria-label="케이스 목차" className="mt-10 hidden lg:block">
       <ol className="space-y-1">
         {caseStudies.map((study) => {
           const on = study.id === openId
@@ -216,19 +223,19 @@ function splitTitle(title: string): string[] {
 }
 
 /**
- * 목록 맨 아래의 경험 칸. 경험 중 열린 하나만 보인다.
+ * 03 의 케이스 칸. 열린 케이스 하나만 보인다.
  *
- * 머리에 경험 바로가기를 둔다. 넓은 화면에서는 왼쪽 레일이 같은 일을 하지만
+ * 머리에 케이스 바로가기를 둔다. 넓은 화면에서는 왼쪽 레일이 같은 일을 하지만
  * 좁은 화면에는 레일이 없어서, 다른 경험으로 가려면 목록까지 올라가야 한다.
  */
 function CasePanel({ openId, onClose }: { openId: string | null; onClose: (backToList: boolean) => void }) {
   const current = caseStudies.find((c) => c.id === openId)
 
   return (
-    <div id="case-panel" className="mt-16 scroll-mt-24 lg:mt-20">
+    <div id="case-panel" className="mt-14 scroll-mt-24">
       <div className="rule flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 pt-5">
         <p className="font-mono text-[0.7rem] tracking-[0.22em] text-paper-faint uppercase">
-          Case Study{current ? ` · ${current.index} / ${String(caseStudies.length).padStart(2, '0')}` : ''}
+          {current ? `Case ${current.index} / ${String(caseStudies.length).padStart(2, '0')}` : 'Case'}
         </p>
         <ul className="flex flex-wrap gap-x-5 gap-y-2" data-print="hide">
           {caseStudies.map((study) => {
@@ -253,7 +260,7 @@ function CasePanel({ openId, onClose }: { openId: string | null; onClose: (backT
 
       {!current && (
         <p className="mt-8 text-sm text-paper-faint" data-print="hide">
-          위 목록에서 CASE가 붙은 줄을 누르면 여기에서 자세히 펼쳐집니다.
+          위 바로가기나 경험 목록의 CASE 줄을 누르면 여기에서 자세히 펼쳐집니다.
         </p>
       )}
 
